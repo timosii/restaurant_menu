@@ -39,3 +39,60 @@ def update_menu(db: Session, menu: schemas.Menu, menu_id: int):
     return updated_menu
 
 
+def get_all_submenus(db: Session, menu_id: int):
+    return db.query(models.Submenu).filter(models.Submenu.menu_id == menu_id).all()
+
+
+def get_submenu(db: Session, menu_id: int, submenu_id: int):
+    return db.query(models.Submenu).filter(models.Submenu.menu_id == menu_id, \
+    models.Submenu.submenu_id == submenu_id).first()
+
+
+def create_submenu(db: Session, submenu: schemas.Submenu):
+    db_submenu = models.Submenu(title=submenu.title, description=submenu.description, menu_id=submenu.menu_id)
+    db.add(db_submenu)
+    db.commit()
+    db.refresh(db_submenu)
+    return db_submenu
+
+
+def delete_submenu(db: Session, menu_id: int, submenu_id: int):
+    db.query(models.Submenu).filter(models.Submenu.menu_id == menu_id, \
+    models.Submenu.submenu_id == submenu_id).delete()
+    db.commit()
+    return
+
+
+def update_submenu(db: Session, submenu: schemas.Submenu, menu_id: int, submenu_id: int):
+    updated_submenu = db.query(models.Submenu).filter(models.Submenu.menu_id == menu_id, \
+    models.Submenu.submenu_id == submenu_id).first()
+    updated_submenu.title = submenu.title
+    updated_submenu.description = submenu.description
+    db.add(updated_submenu)
+    db.commit()
+    return updated_submenu
+
+
+def get_all_dishes(db: Session, menu_id: int, submenu_id: int):
+    return db.query(models.Dish).filter(models.Dish.submenu_id == submenu_id, \
+    models.Dish.menu_id == menu_id).all()
+
+
+def get_dish(db: Session, menu_id: int, submenu_id: int, dish_id: int):
+    pass
+
+
+def create_dish(db: Session, dish: schemas.Dish):
+    pass
+
+
+def delete_dish(db: Session, menu_id: int, submenu_id: int, dish_id: int):
+    pass
+
+
+def update_dish(db: Session, dish: schemas.Dish, menu_id: int, submenu_id: int, dish_id: int):
+    pass
+
+
+
+

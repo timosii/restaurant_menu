@@ -55,7 +55,7 @@ def delete_menu(menu_id: int, db: Session = Depends(get_db)):
 def update_menu(menu: schemas.Menu, menu_id: int, db: Session = Depends(get_db)):
     db_menu = crud.get_menu(db, menu_id=menu_id)
     if db_menu is None:
-        raise HTTPException(status_code=404, detail="Menu not found")
+        raise HTTPException(status_code=404, detail="menu not found")
 
     return crud.update_menu(db=db, menu=menu, menu_id=menu_id)
 
