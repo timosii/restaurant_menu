@@ -1,0 +1,5 @@
+.git
+.mypy_cache
+dist
+**/__pycache__
+
