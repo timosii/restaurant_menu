@@ -4,7 +4,6 @@ from sqlalchemy.orm import Session
 from . import models, schemas
 
 
-
 def get_all_menus(db: Session):
     return db.query(models.Menu).all()
 

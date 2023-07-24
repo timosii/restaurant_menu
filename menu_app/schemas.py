@@ -3,7 +3,7 @@ from pydantic import BaseModel
 from typing import Union
 
 class Menu(BaseModel):
-    id: Union[int, str] | None = None
+    menu_id: Union[int, str] | None = None
     title: str
     description: str | None = None
 
@@ -11,5 +11,6 @@ class Menu(BaseModel):
         orm_mode = True
 
 
-
-
+class SubMenu(Menu):
+    submenu_id: Union[int, str] | None = None
+    

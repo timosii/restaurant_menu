@@ -30,7 +30,7 @@ def create_menu(menu: schemas.Menu, db: Session = Depends(get_db)):
     if db_menu:
         raise HTTPException(status_code=400, detail="menu already exist")
     db_output = crud.create_menu(db=db, menu=menu)
-    db_output.id = str(db_output.id)
+    db_output.menu_id = str(db_output.menu_id)
     return db_output
 
 
@@ -39,7 +39,7 @@ def read_menu(menu_id: int, db: Session = Depends(get_db)):
     db_menu = crud.get_menu(db, menu_id=menu_id)
     if db_menu is None:
         raise HTTPException(status_code=404, detail="menu not found")
-    db_menu.id = str(db_menu.id)
+    db_menu.menu_id = str(db_menu.menu_id)
     return db_menu
 
 
