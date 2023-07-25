@@ -1,50 +1,6 @@
 # используется для Pydantic моделей
-from pydantic import BaseModel
-from typing import Union, List
-
-
-class DishBase(BaseModel):
-    title: str
-    description: str
-    price: str
-
-class DishCreate(DishBase):
-    pass
-
-
-class DishUpdate(DishBase):
-    pass
-
-
-class DishOut(DishBase):
-    id: str
-
-    class Config:
-        orm_mode = True
-
-
-class SubmenuBase(BaseModel):
-    title: str
-    description: str
-    
-    class Config:
-        orm_mode = True
-
-
-class SubmenuCreate(SubmenuBase):
-    pass
-
-
-class SubmenuUpdate(SubmenuBase):
-    pass
-
-
-class SubmenuOut(SubmenuBase):
-    id: Union[str, int]
-    # dishes_count: int
-
-    class Config:
-        orm_mode = True
+from pydantic import BaseModel, UUID4
+from typing import Union, List, Optional
 
 
 class MenuBase(BaseModel):
@@ -52,7 +8,7 @@ class MenuBase(BaseModel):
     description: str
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class MenuCreate(MenuBase):
@@ -64,10 +20,54 @@ class MenuUpdate(MenuBase):
 
 
 class MenuOut(MenuBase):
-    id: Union[str, int]
+    id: UUID4
     # submenus_count: int
     # dishes_count: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
+
+class SubmenuBase(BaseModel):
+    title: str
+    description: str
+    
+    class Config:
+        from_attributes = True
+
+
+class SubmenuCreate(SubmenuBase):
+    pass
+
+
+class SubmenuUpdate(SubmenuBase):
+    pass
+
+
+class SubmenuOut(SubmenuBase):
+    id: Optional[UUID4] = None
+    # dishes_count: int
+
+    class Config:
+        from_attributes = True
+
+
+class DishBase(BaseModel):
+    title: str
+    description: str
+    price: str
+
+
+class DishCreate(DishBase):
+    pass
+
+
+class DishUpdate(DishBase):
+    pass
+
+
+class DishOut(DishBase):
+    id: UUID4
+
+    class Config:
+        from_attributes = True

@@ -1,7 +1,6 @@
-
-from enum import unique
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Numeric
 from sqlalchemy.orm import relationship
+from sqlalchemy.dialects.postgresql import UUID
 
 from .database import Base
 
@@ -9,9 +8,11 @@ from .database import Base
 class Menu(Base):
     __tablename__ = 'menus'
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
+    id = Column(UUID(as_uuid=True), primary_key=True)
     title = Column(String, unique=True)
     description = Column(String)
+    # submenus_count = Column(Integer, default=0)
+    # dishes_count = Column(Integer, default=0)
 
     submenus = relationship("Submenu", back_populates='menu', cascade="all, delete")
 
@@ -19,10 +20,11 @@ class Menu(Base):
 class Submenu(Base):
     __tablename__ = "submenus"
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
+    id = Column(UUID(as_uuid=True), primary_key=True)
     title = Column(String, unique=True)
     description = Column(String)
-    parent_menu_id = Column(Integer, ForeignKey("menus.id"))
+    parent_menu_id = Column(UUID, ForeignKey("menus.id"))
+    # dishes_count = Column(Integer, default=0)
 
     menu = relationship("Menu", back_populates="submenus")
     dishes = relationship("Dish", back_populates="submenu", cascade="all, delete")
@@ -31,12 +33,10 @@ class Submenu(Base):
 class Dish(Base):
     __tablename__ = "dishes"
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
+    id = Column(UUID(as_uuid=True), primary_key=True)
     title = Column(String, unique=True)
     description = Column(String)
     price = Column(Numeric(precision=10, scale=2))
-    parent_submenu_id = Column(Integer, ForeignKey("submenus.id"))
+    parent_submenu_id = Column(UUID, ForeignKey("submenus.id"))
 
     submenu = relationship("Submenu", back_populates="dishes")
-
-
