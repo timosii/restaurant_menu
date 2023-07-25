@@ -10,7 +10,6 @@ def get_url():
     db = os.getenv("POSTGRES_DB", "menu_db")
     return f"postgresql://{user}:{password}@{server}/{db}"
 
-# SQLALCHEMY_DATABASE_URL = "postgresql://postgres:123@localhost/menu_db"
 SQLALCHEMY_DATABASE_URL = get_url()
 
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
