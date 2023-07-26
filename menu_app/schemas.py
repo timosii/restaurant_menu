@@ -1,9 +1,7 @@
-# используется для Pydantic моделей
 from pydantic import BaseModel, UUID4
-from typing import Union, List, Optional
 
 
-class MenuBase(BaseModel):
+class MenuIn(BaseModel):
     title: str
     description: str
 
@@ -11,16 +9,10 @@ class MenuBase(BaseModel):
         from_attributes = True
 
 
-class MenuCreate(MenuBase):
-    pass
-
-
-class MenuUpdate(MenuBase):
-    pass
-
-
-class MenuOut(MenuBase):
+class MenuOut(BaseModel):    
     id: UUID4
+    title: str
+    description: str
     # submenus_count: int
     # dishes_count: int
 
@@ -28,7 +20,7 @@ class MenuOut(MenuBase):
         from_attributes = True
 
 
-class SubmenuBase(BaseModel):
+class SubmenuIn(BaseModel):
     title: str
     description: str
     
@@ -36,38 +28,33 @@ class SubmenuBase(BaseModel):
         from_attributes = True
 
 
-class SubmenuCreate(SubmenuBase):
-    pass
-
-
-class SubmenuUpdate(SubmenuBase):
-    pass
-
-
-class SubmenuOut(SubmenuBase):
-    id: Optional[UUID4] = None
+class SubmenuOut(BaseModel):
+    id: UUID4
+    title: str
+    description: str
     # dishes_count: int
-
+    
     class Config:
         from_attributes = True
 
 
-class DishBase(BaseModel):
+class DishIn(BaseModel):
     title: str
     description: str
     price: str
 
+    class Config:
+        from_attributes = True
 
-class DishCreate(DishBase):
-    pass
-
-
-class DishUpdate(DishBase):
-    pass
-
-
-class DishOut(DishBase):
+class DishOut(DishIn):
     id: UUID4
+    title: str
+    description: str
+    price: str
 
     class Config:
         from_attributes = True
+
+class DeleteMSG(BaseModel):
+    status: bool
+    message: str
