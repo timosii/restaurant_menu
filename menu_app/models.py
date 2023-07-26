@@ -11,8 +11,8 @@ class Menu(Base):
     id = Column(UUID(as_uuid=True), primary_key=True)
     title = Column(String, unique=True)
     description = Column(String)
-    # submenus_count = Column(Integer, default=0)
-    # dishes_count = Column(Integer, default=0)
+    submenus_count = Column(Integer, default=0)
+    dishes_count = Column(Integer, default=0)
 
     submenus = relationship("Submenu", 
                             back_populates='menu',
@@ -26,7 +26,7 @@ class Submenu(Base):
     title = Column(String, unique=True)
     description = Column(String)
     parent_menu_id = Column(UUID, ForeignKey("menus.id"))
-    # dishes_count = Column(Integer, default=0)
+    dishes_count = Column(Integer, default=0)
 
     menu = relationship("Menu", back_populates="submenus")
     dishes = relationship("Dish", 

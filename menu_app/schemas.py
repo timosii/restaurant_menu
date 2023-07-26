@@ -13,8 +13,8 @@ class MenuOut(BaseModel):
     id: UUID4
     title: str
     description: str
-    # submenus_count: int
-    # dishes_count: int
+    submenus_count: int
+    dishes_count: int
 
     class Config:
         from_attributes = True
@@ -32,7 +32,7 @@ class SubmenuOut(BaseModel):
     id: UUID4
     title: str
     description: str
-    # dishes_count: int
+    dishes_count: int
     
     class Config:
         from_attributes = True

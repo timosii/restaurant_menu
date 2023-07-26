@@ -5,6 +5,20 @@ from fastapi import HTTPException
 
 from . import models, schemas
 
+# Подсчёт количества блюд для подменю
+def dish_count(db: Session, submenu_id: UUID):
+    current_submenu = db.query(models.Dish).filter(models.Dish.parent_submenu_id == submenu_id).all()
+    return len(current_submenu)
+
+# Подсчёт количества подменю и блюд для меню
+def submenu_dish_count(db: Session, menu_id: UUID):
+    submenus = db.query(models.Submenu).filter(models.Submenu.parent_menu_id == menu_id).all()
+    dishes = 0
+    for submenu in submenus:
+        dishes += dish_count(db, submenu.id)
+
+    return len(submenus), dishes
+
 # Получение списка всех меню
 def get_all_menus(db: Session):
     return db.query(models.Menu).all()

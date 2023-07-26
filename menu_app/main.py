@@ -23,6 +23,9 @@ def get_db():
 @app.get("/api/v1/menus", response_model=list[schemas.MenuOut])
 def read_menus(db: Session = Depends(get_db)):
     menus = crud.get_all_menus(db)
+    for menu in menus:
+        menu.submenus_count, menu.dishes_count = \
+        crud.submenu_dish_count(db=db, menu_id=menu.id) 
     return menus
 
 # Создать меню
@@ -35,6 +38,8 @@ def create_menu(menu: schemas.MenuIn,
     if check_menu:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="menu already exist")
     db_output = crud.create_menu(db=db, menu=menu)
+    db_output.submenus_count, db_output.dishes_count = \
+    crud.submenu_dish_count(db=db, menu_id=db_output.id) 
     return db_output
 
 # Получить меню по id
@@ -43,7 +48,10 @@ def create_menu(menu: schemas.MenuIn,
 def read_menu(menu_id: UUID, db: Session = Depends(get_db)):
     db_menu = crud.get_menu(db, menu_id=menu_id)
     if db_menu is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="menu not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, 
+                            detail="menu not found")
+    db_menu.submenus_count, db_menu.dishes_count = \
+    crud.submenu_dish_count(db=db, menu_id=db_menu.id) 
     return db_menu
 
 # Удалить меню
@@ -66,6 +74,8 @@ def update_menu(menu: schemas.MenuIn,
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, 
                             etail="menu not found")
     updated_menu = crud.update_menu(db=db, menu=menu, menu_id=menu_id)
+    updated_menu.submenus_count, updated_menu.dishes_count = \
+    crud.submenu_dish_count(db=db, menu_id=updated_menu.id) 
     return updated_menu
 
 # Получить список всех подменю
@@ -73,12 +83,10 @@ def update_menu(menu: schemas.MenuIn,
          response_model=list[schemas.SubmenuOut])
 def read_submenus(menu_id: UUID,
                    db: Session = Depends(get_db)):
-    # db_menu = crud.get_menu(db, menu_id=menu_id)
-    # if db_menu is None:
-    #     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, 
-    #                         detail="menu not found")
-
     submenus = crud.get_all_submenus(db, menu_id)
+    for submenu in submenus:
+        submenu.dishes_count = crud.dish_count(db=db, 
+                                               submenu_id=submenu.id)
     return submenus
 
 # Получить подменю по id
@@ -89,7 +97,8 @@ def read_submenu(submenu_id: UUID,
     db_submenu = crud.get_submenu(db, submenu_id=submenu_id)
     if db_submenu is None:
         raise HTTPException(status_code=404, detail="submenu not found")
-    
+    db_submenu.dishes_count = crud.dish_count(db=db, 
+                                               submenu_id=db_submenu.id)
     return db_submenu
 
 # Создать подменю
@@ -114,6 +123,8 @@ def update_submenu(menu_id: UUID,
                                           submenu_id, 
                                           submenu_update, 
                                           db)
+    updated_submenu.dishes_count = crud.dish_count(db=db, 
+                                               submenu_id=updated_submenu.id)
     return updated_submenu
 
 # Удалить подменю
