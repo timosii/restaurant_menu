@@ -27,7 +27,10 @@ def create_menu(db: Session, menu: schemas.MenuIn):
 
 # Удаление меню
 def delete_menu(db: Session, menu_id: UUID):
-    db.query(models.Menu).filter(models.Menu.id == menu_id).delete()
+    menu_for_delete = db.query(models.Menu).filter(models.Menu.id == menu_id).first()
+    if menu_for_delete is None:
+        raise HTTPException(status_code=404, detail="menu not found")
+    db.delete(menu_for_delete)
     db.commit()
     return
 
@@ -65,26 +68,26 @@ def create_submenu(db: Session,
     return db_submenu
 
 # Удаление подменю
-def delete_submenu(db: Session, 
-                   menu_id: UUID, 
-                   submenu_id: UUID):
-    submenu_to_delete = db.query(models.Submenu).filter(
-    models.Submenu.id == submenu_id).first()
-    db.delete(submenu_to_delete)
+def delete_submenu(menu_id: UUID, 
+                   submenu_id: UUID,
+                   db: Session):
+    submenu_for_delete = db.query(models.Submenu).filter(models.Submenu.id == submenu_id).first()
+    if submenu_for_delete is None:
+        raise HTTPException(status_code=404, detail="submenu not found")
+    db.delete(submenu_for_delete)
     db.commit()
     return 
 
 # Обновление подменю
-def update_submenu(db: Session, 
-                   submenu: schemas.SubmenuIn, 
-                   menu_id: UUID, 
-                   submenu_id: UUID):
+def update_submenu(menu_id: UUID, 
+                   submenu_id: UUID,
+                   submenu: schemas.SubmenuIn,
+                   db: Session):
     submenu_to_update = db.query(models.Submenu).filter(
         models.Submenu.id == submenu_id,
         models.Submenu.parent_menu_id == menu_id).first()
     submenu_to_update.title = submenu.title
     submenu_to_update.description = submenu.description
-    submenu_to_update.price = submenu.price
     db.add(submenu_to_update)
     db.commit()
     return submenu_to_update
@@ -141,9 +144,10 @@ def delete_dish(menu_id: UUID,
                 dish_id: UUID, 
                 db: Session):
 
-    dish_to_delete = db.query(models.Dish).filter(
-            models.Dish.id == dish_id,
-            models.Dish.parent_submenu_id == submenu_id).one()
-    db.delete(dish_to_delete)
+    dish_for_delete = db.query(models.Dish).filter(
+            models.Dish.id == dish_id).first()
+    if dish_for_delete is None:
+        raise HTTPException(status_code=404, detail="dish not found")
+    db.delete(dish_for_delete)
     db.commit()
     return

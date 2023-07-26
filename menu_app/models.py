@@ -15,8 +15,8 @@ class Menu(Base):
     # dishes_count = Column(Integer, default=0)
 
     submenus = relationship("Submenu", 
-                            back_populates='menu', 
-                            passive_deletes=True)
+                            back_populates='menu',
+                            cascade="all, delete")
 
 
 class Submenu(Base):
@@ -25,16 +25,13 @@ class Submenu(Base):
     id = Column(UUID(as_uuid=True), primary_key=True)
     title = Column(String, unique=True)
     description = Column(String)
-    parent_menu_id = Column(UUID, 
-                            ForeignKey("menus.id", 
-                                       ondelete="CASCADE"), 
-                            nullable=False)
+    parent_menu_id = Column(UUID, ForeignKey("menus.id"))
     # dishes_count = Column(Integer, default=0)
 
     menu = relationship("Menu", back_populates="submenus")
     dishes = relationship("Dish", 
-                          back_populates="submenu", 
-                          passive_deletes=True)
+                          back_populates="submenu",
+                          cascade="all, delete")
 
 
 class Dish(Base):
@@ -43,10 +40,8 @@ class Dish(Base):
     id = Column(UUID(as_uuid=True), primary_key=True)
     title = Column(String, unique=True)
     description = Column(String)
-    price = Column(Numeric(precision=10, scale=2))
-    parent_submenu_id = Column(UUID, ForeignKey("submenus.id", 
-                                                ondelete="CASCADE"), 
-                               nullable=False)
+    price = Column(Numeric(scale=2))
+    parent_submenu_id = Column(UUID, ForeignKey("submenus.id"))
 
     submenu = relationship("Submenu", 
                            back_populates="dishes")

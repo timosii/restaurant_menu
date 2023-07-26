@@ -46,7 +46,7 @@ class DishIn(BaseModel):
     class Config:
         from_attributes = True
 
-class DishOut(DishIn):
+class DishOut(BaseModel):
     id: UUID4
     title: str
     description: str
