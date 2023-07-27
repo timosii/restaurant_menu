@@ -1,4 +1,5 @@
-package-install:
-	pip install --user --force-reinstall dist/*.whl
+install:
+	poetry install
 
-
+uvicorn-connect:
+	poetry run uvicorn menu_app.main:app --reload

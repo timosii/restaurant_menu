@@ -6,8 +6,8 @@
 2. Переходим в папку с проектом
 ```cd restaurant_menu``` 
 3. Устанавливаем пакеты
-```poetry install```
+```make install```
 4. В файл `.env` вносим свои данные для доступа к базе данных
 5. Запускаем сервер
-```poetry run uvicorn menu_app.main:app --reload```
+```make uvicorn-connect```
 
