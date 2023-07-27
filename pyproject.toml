@@ -11,6 +11,8 @@ SQLAlchemy = "^2.0.19"
 postgres = "^4.0"
 sqlalchemy-orm = "^1.2.10"
 fastapi = "^0.100.0"
+uvicorn = "^0.23.1"
+pydantic-settings = "^2.0.2"
 
 [tool.poetry.dev-dependencies]
 

@@ -8,5 +8,5 @@
 ```poetry install```
 3. В файл `.env` вносим свои данные для доступа к базе данных
 4. Запускаем сервер
-```uvicorn menu_app.main:app --reload```
+```poetry run uvicorn menu_app.main:app --reload```
 
