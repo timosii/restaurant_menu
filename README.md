@@ -2,6 +2,7 @@
 # Description
 Написать проект на FastAPI с использованием PostgreSQL в качестве БД. В проекте следует реализовать REST API по работе с меню ресторана, все CRUD операции
 # Install
+0. ```git clone git@github.com:timosii/restaurant_menu.git```
 1. Переходим в папку с проектом
 ```cd restaurant_menu``` 
 2. Устанавливаем пакеты
