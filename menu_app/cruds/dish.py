@@ -24,13 +24,11 @@ def create_dish(menu_id: UUID,
                 submenu_id: UUID, 
                 dish: schemas.DishIn, 
                 db: Session):
-
     db_dish = models.Dish(id=uuid4(), 
                           title=dish.title, 
                           description=dish.description, 
                           price=dish.price, 
                           parent_submenu_id=submenu_id)
-
     db.add(db_dish)
     db.commit()
     db.refresh(db_dish)
@@ -60,7 +58,6 @@ def delete_dish(menu_id: UUID,
                 submenu_id: UUID, 
                 dish_id: UUID, 
                 db: Session):
-
     dish_for_delete = db.query(models.Dish).filter(
             models.Dish.id == dish_id).first()
     if dish_for_delete is None:

@@ -1,6 +1,6 @@
 from .. import schemas, models
 from menu_app.cruds.submenu import get_submenu, get_submenus, create_submenu, update_submenu, delete_submenu, dish_count
-from menu_app.database import SessionLocal, engine
+from menu_app.database import engine, get_db
 from uuid import UUID
 from sqlalchemy.orm import Session
 from fastapi import Depends, status, FastAPI, APIRouter
@@ -11,13 +11,6 @@ models.Base.metadata.create_all(bind=engine)
 app = FastAPI()
 router = APIRouter(prefix="/api/v1/menus/{menu_id}/submenus")
 
-# Dependency
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 # Получить список всех подменю
 @router.get("/", response_model=list[schemas.SubmenuOut])

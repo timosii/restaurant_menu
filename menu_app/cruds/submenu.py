@@ -43,7 +43,6 @@ def delete_submenu(menu_id: UUID,
     db.commit()
     return message_deleted(SAMPLE)
 
-
 # Обновление подменю
 def update_submenu(menu_id: UUID, 
                    submenu_id: UUID,

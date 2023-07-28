@@ -1,6 +1,6 @@
 from .. import schemas, models
 from menu_app.cruds.dish import get_dish, get_dishes, create_dish, update_dish, delete_dish
-from menu_app.database import SessionLocal, engine
+from menu_app.database import engine, get_db
 from uuid import UUID
 from sqlalchemy.orm import Session
 from fastapi import Depends, status, FastAPI, APIRouter
@@ -11,13 +11,6 @@ models.Base.metadata.create_all(bind=engine)
 app = FastAPI()
 router = APIRouter(prefix="/api/v1/menus/{menu_id}/submenus/{submenu_id}/dishes")
 
-# Dependency
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 # Просмотр списка блюд
 @router.get('/', response_model=list[schemas.DishOut])

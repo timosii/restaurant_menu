@@ -1,6 +1,6 @@
 from .. import schemas, models
 from menu_app.cruds.menu import get_menu, get_menus, create_menu, update_menu, delete_menu, submenu_dish_count
-from menu_app.database import SessionLocal, engine
+from menu_app.database import engine, get_db
 from uuid import UUID
 from sqlalchemy.orm import Session
 from fastapi import FastAPI, Depends, status, APIRouter
@@ -11,13 +11,6 @@ models.Base.metadata.create_all(bind=engine)
 app = FastAPI()
 router = APIRouter(prefix="/api/v1/menus")
 
-# Dependency
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 # Получить список всех меню
 @router.get("/", response_model=list[schemas.MenuOut])
