@@ -9,7 +9,7 @@ from fastapi import FastAPI, Depends, status, APIRouter
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
-router = APIRouter()
+router = APIRouter(prefix="/api/v1/menus")
 
 # Dependency
 def get_db():
@@ -20,7 +20,7 @@ def get_db():
         db.close()
 
 # Получить список всех меню
-@router.get("/api/v1/menus", response_model=list[schemas.MenuOut])
+@router.get("/", response_model=list[schemas.MenuOut])
 def reading_menus(db: Session = Depends(get_db)):
     menus = get_menus(db)
     for menu in menus:
@@ -29,8 +29,7 @@ def reading_menus(db: Session = Depends(get_db)):
     return menus
 
 # Создать меню
-@router.post("/api/v1/menus", 
-          response_model=schemas.MenuOut, 
+@router.post("/", response_model=schemas.MenuOut, 
           status_code=status.HTTP_201_CREATED)
 def creating_menu(menu: schemas.MenuIn, 
                 db: Session = Depends(get_db)):
@@ -40,7 +39,7 @@ def creating_menu(menu: schemas.MenuIn,
     return db_output
 
 # Получить меню по id
-@router.get("/api/v1/menus/{menu_id}",
+@router.get("/{menu_id}",
           response_model=schemas.MenuOut)
 def reading_menu(menu_id: UUID, db: Session = Depends(get_db)):
     db_menu = get_menu(db, menu_id=menu_id)
@@ -49,13 +48,13 @@ def reading_menu(menu_id: UUID, db: Session = Depends(get_db)):
     return db_menu
 
 # Удалить меню
-@router.delete("/api/v1/menus/{menu_id}")
+@router.delete("/{menu_id}")
 def deleting_menu(menu_id: UUID, 
                 db: Session = Depends(get_db)):
     return delete_menu(db=db, menu_id=menu_id)
 
 # Обновить меню
-@router.patch("/api/v1/menus/{menu_id}",
+@router.patch("/{menu_id}",
             response_model=schemas.MenuOut)
 def updating_menu(menu: schemas.MenuIn,
                 menu_id: UUID, db: Session = Depends(get_db)):

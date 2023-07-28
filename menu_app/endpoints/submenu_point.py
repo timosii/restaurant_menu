@@ -9,7 +9,7 @@ from fastapi import Depends, status, FastAPI, APIRouter
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
-router = APIRouter()
+router = APIRouter(prefix="/api/v1/menus/{menu_id}/submenus")
 
 # Dependency
 def get_db():
@@ -20,8 +20,7 @@ def get_db():
         db.close()
 
 # Получить список всех подменю
-@router.get("/api/v1/menus/{menu_id}/submenus",
-         response_model=list[schemas.SubmenuOut])
+@router.get("/", response_model=list[schemas.SubmenuOut])
 def reading_submenus(menu_id: UUID,
                    db: Session = Depends(get_db)):
     submenus = get_submenus(db, menu_id)
@@ -31,7 +30,7 @@ def reading_submenus(menu_id: UUID,
     return submenus
 
 # Получить подменю по id
-@router.get("/api/v1/menus/{menu_id}/submenus/{submenu_id}", 
+@router.get("/{submenu_id}", 
          response_model=schemas.SubmenuOut)
 def reading_submenu(submenu_id: UUID,
                  db: Session = Depends(get_db)):
@@ -41,8 +40,8 @@ def reading_submenu(submenu_id: UUID,
     return db_submenu
 
 # Создать подменю
-@router.post("/api/v1/menus/{menu_id}/submenus",
-          response_model=schemas.SubmenuOut, status_code=status.HTTP_201_CREATED)
+@router.post("/", response_model=schemas.SubmenuOut, 
+             status_code=status.HTTP_201_CREATED)
 def creating_submenu(menu_id: UUID,
                    submenu: schemas.SubmenuIn,
                    db: Session = Depends(get_db)
@@ -51,7 +50,7 @@ def creating_submenu(menu_id: UUID,
     return db_submenu
 
 # Обновить подменю
-@router.patch("/api/v1/menus/{menu_id}/submenus/{submenu_id}", 
+@router.patch("/{submenu_id}", 
            response_model=schemas.SubmenuOut)
 def updating_submenu(menu_id: UUID, 
                    submenu_id: UUID, 
@@ -66,7 +65,7 @@ def updating_submenu(menu_id: UUID,
     return updated_submenu
 
 # Удалить подменю
-@router.delete("/api/v1/menus/{menu_id}/submenus/{submenu_id}", 
+@router.delete("/{submenu_id}", 
             response_model=schemas.DeleteMSG)
 def deleting_submenu(menu_id: UUID, 
                    submenu_id: UUID, 

@@ -9,7 +9,7 @@ from fastapi import Depends, status, FastAPI, APIRouter
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
-router = APIRouter()
+router = APIRouter(prefix="/api/v1/menus/{menu_id}/submenus/{submenu_id}/dishes")
 
 # Dependency
 def get_db():
@@ -20,8 +20,7 @@ def get_db():
         db.close()
 
 # Просмотр списка блюд
-@router.get('/api/v1/menus/{menu_id}/submenus/{submenu_id}/dishes',
-    response_model=list[schemas.DishOut])
+@router.get('/', response_model=list[schemas.DishOut])
 def reading_dishes(menu_id: UUID, 
                submenu_id: UUID, 
                db: Session = Depends(get_db)):
@@ -31,7 +30,7 @@ def reading_dishes(menu_id: UUID,
     return dishes
 
 # Посмотреть определённое блюдо
-@router.get("/api/v1/menus/{menu_id}/submenus/{submenu_id}/dishes/{dish_id}", 
+@router.get("/{dish_id}", 
          response_model=schemas.DishOut)
 def reading_dish(dish_id: UUID, 
                          db: Session = Depends(get_db)
@@ -41,9 +40,8 @@ def reading_dish(dish_id: UUID,
     return current_dish
 
 # Создать блюдо
-@router.post("/api/v1/menus/{menu_id}/submenus/{submenu_id}/dishes", 
-          response_model=schemas.DishOut,
-          status_code=status.HTTP_201_CREATED)
+@router.post("/", response_model=schemas.DishOut, 
+             status_code=status.HTTP_201_CREATED)
 def creating_dish(menu_id: UUID, 
                 submenu_id: UUID, 
                 dish: schemas.DishIn, 
@@ -56,7 +54,7 @@ def creating_dish(menu_id: UUID,
     return current_dish
 
 # Обновить блюдо
-@router.patch("/api/v1/menus/{menu_id}/submenus/{submenu_id}/dishes/{dish_id}", 
+@router.patch("/{dish_id}", 
            response_model=schemas.DishOut)
 def updating_dish(menu_id: UUID, 
                         submenu_id: UUID, 
@@ -72,8 +70,7 @@ def updating_dish(menu_id: UUID,
     return dish_to_update
 
 # Удалить блюдо
-@router.delete("/api/v1/menus/{menu_id}/submenus/{submenu_id}/dishes/{dish_id}", 
-            response_model=schemas.DeleteMSG)
+@router.delete("/{dish_id}", response_model=schemas.DeleteMSG)
 def deleting_dish(menu_id: UUID, 
                 submenu_id: UUID, 
                 dish_id: UUID, 
