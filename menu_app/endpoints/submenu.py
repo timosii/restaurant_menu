@@ -1,6 +1,11 @@
 from .. import schemas, models
-from menu_app.cruds.submenu import get_submenu, get_submenus, create_submenu, update_submenu, delete_submenu, dish_count
-from menu_app.database import engine, get_db
+from ..cruds.submenu import (get_submenu, 
+                                    get_submenus, 
+                                    create_submenu, 
+                                    update_submenu, 
+                                    delete_submenu, 
+                                    dish_count)
+from ..database import engine, get_db
 from uuid import UUID
 from sqlalchemy.orm import Session
 from fastapi import Depends, status, FastAPI, APIRouter

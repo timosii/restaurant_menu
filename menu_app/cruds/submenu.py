@@ -1,7 +1,7 @@
 from .. import models, schemas
+from ..errors import not_found, message_deleted
 from uuid import UUID, uuid4
 from sqlalchemy.orm import Session
-from menu_app.errors import not_found, message_deleted
 
 
 SAMPLE='submenu'

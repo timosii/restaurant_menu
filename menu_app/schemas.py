@@ -58,3 +58,4 @@ class DishOut(BaseModel):
 class DeleteMSG(BaseModel):
     status: bool
     message: str
+    

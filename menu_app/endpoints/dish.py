@@ -1,6 +1,10 @@
 from .. import schemas, models
-from menu_app.cruds.dish import get_dish, get_dishes, create_dish, update_dish, delete_dish
-from menu_app.database import engine, get_db
+from ..cruds.dish import (get_dish, 
+                   get_dishes, 
+                   create_dish, 
+                   update_dish, 
+                   delete_dish)
+from ..database import engine, get_db
 from uuid import UUID
 from sqlalchemy.orm import Session
 from fastapi import Depends, status, FastAPI, APIRouter
