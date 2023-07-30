@@ -15,7 +15,6 @@ models.Base.metadata.create_all(bind=engine)
 
 router = APIRouter(prefix="/api/v1/menus")
 
-
 # Получить список всех меню
 @router.get("/", response_model=list[schemas.MenuOut])
 def reading_menus(db: Session = Depends(get_db)):

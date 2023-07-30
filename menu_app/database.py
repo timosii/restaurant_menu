@@ -4,14 +4,14 @@ from sqlalchemy.orm import sessionmaker, declarative_base
 
 
 def get_url():
-    db = settings.POSTGRES_DB    
     user = settings.POSTGRES_USER
     password = settings.POSTGRES_PASSWORD
     hostname = settings.POSTGRES_HOST
     port = settings.POSTGRES_PORT
+    db = settings.POSTGRES_DB    
+  
         
     return f"postgresql://{user}:{password}@{hostname}:{port}/{db}"
-
 
 SQLALCHEMY_DATABASE_URL = get_url()
 

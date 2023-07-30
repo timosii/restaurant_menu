@@ -7,10 +7,10 @@ from ..cruds.dish import (get_dish,
 from ..database import engine, get_db
 from uuid import UUID
 from sqlalchemy.orm import Session
-from fastapi import Depends, status, FastAPI, APIRouter
+from fastapi import Depends, status, APIRouter
+
 
 models.Base.metadata.create_all(bind=engine)
-
 
 router = APIRouter(prefix="/api/v1/menus/{menu_id}/submenus/{submenu_id}/dishes")
 

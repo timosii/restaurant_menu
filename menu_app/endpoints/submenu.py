@@ -8,14 +8,12 @@ from ..cruds.submenu import (get_submenu,
 from ..database import engine, get_db
 from uuid import UUID
 from sqlalchemy.orm import Session
-from fastapi import Depends, status, FastAPI, APIRouter
+from fastapi import Depends, status, APIRouter
 
 
 models.Base.metadata.create_all(bind=engine)
 
-
 router = APIRouter(prefix="/api/v1/menus/{menu_id}/submenus")
-
 
 # Получить список всех подменю
 @router.get("/", response_model=list[schemas.SubmenuOut], 
