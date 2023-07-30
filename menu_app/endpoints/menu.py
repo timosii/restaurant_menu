@@ -8,12 +8,11 @@ from ..cruds.menu import (get_menu,
 from ..database import engine, get_db
 from uuid import UUID
 from sqlalchemy.orm import Session
-from fastapi import FastAPI, Depends, status, APIRouter
+from fastapi import Depends, status, APIRouter
 
 
 models.Base.metadata.create_all(bind=engine)
 
-app = FastAPI()
 router = APIRouter(prefix="/api/v1/menus")
 
 
@@ -46,7 +45,7 @@ def reading_menu(menu_id: UUID, db: Session = Depends(get_db)):
     return db_menu
 
 # Удалить меню
-@router.delete("/{menu_id}")
+@router.delete("/{menu_id}", status_code=status.HTTP_200_OK)
 def deleting_menu(menu_id: UUID, 
                 db: Session = Depends(get_db)):
     return delete_menu(db=db, menu_id=menu_id)

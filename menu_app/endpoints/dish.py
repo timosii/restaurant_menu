@@ -9,12 +9,10 @@ from uuid import UUID
 from sqlalchemy.orm import Session
 from fastapi import Depends, status, FastAPI, APIRouter
 
-
 models.Base.metadata.create_all(bind=engine)
 
-app = FastAPI()
-router = APIRouter(prefix="/api/v1/menus/{menu_id}/submenus/{submenu_id}/dishes")
 
+router = APIRouter(prefix="/api/v1/menus/{menu_id}/submenus/{submenu_id}/dishes")
 
 # Просмотр списка блюд
 @router.get('/', response_model=list[schemas.DishOut])

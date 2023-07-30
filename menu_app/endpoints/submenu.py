@@ -13,7 +13,7 @@ from fastapi import Depends, status, FastAPI, APIRouter
 
 models.Base.metadata.create_all(bind=engine)
 
-app = FastAPI()
+
 router = APIRouter(prefix="/api/v1/menus/{menu_id}/submenus")
 
 
