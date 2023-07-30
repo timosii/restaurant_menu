@@ -45,7 +45,9 @@ def reading_menu(menu_id: UUID, db: Session = Depends(get_db)):
     return db_menu
 
 # Удалить меню
-@router.delete("/{menu_id}", status_code=status.HTTP_200_OK)
+@router.delete("/{menu_id}", 
+               response_model=schemas.DeleteMSG,
+               status_code=status.HTTP_200_OK)
 def deleting_menu(menu_id: UUID, 
                 db: Session = Depends(get_db)):
     return delete_menu(db=db, menu_id=menu_id)

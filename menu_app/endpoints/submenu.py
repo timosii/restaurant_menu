@@ -18,7 +18,8 @@ router = APIRouter(prefix="/api/v1/menus/{menu_id}/submenus")
 
 
 # Получить список всех подменю
-@router.get("/", response_model=list[schemas.SubmenuOut])
+@router.get("/", response_model=list[schemas.SubmenuOut], 
+            status_code=status.HTTP_200_OK)
 def reading_submenus(menu_id: UUID,
                    db: Session = Depends(get_db)):
     submenus = get_submenus(db, menu_id)
@@ -64,7 +65,8 @@ def updating_submenu(menu_id: UUID,
 
 # Удалить подменю
 @router.delete("/{submenu_id}", 
-            response_model=schemas.DeleteMSG)
+            response_model=schemas.DeleteMSG, 
+            status_code=status.HTTP_200_OK)
 def deleting_submenu(menu_id: UUID, 
                    submenu_id: UUID, 
                    db: Session = Depends(get_db)):

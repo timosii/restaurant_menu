@@ -15,7 +15,8 @@ models.Base.metadata.create_all(bind=engine)
 router = APIRouter(prefix="/api/v1/menus/{menu_id}/submenus/{submenu_id}/dishes")
 
 # Просмотр списка блюд
-@router.get('/', response_model=list[schemas.DishOut])
+@router.get('/', response_model=list[schemas.DishOut], 
+            status_code=status.HTTP_200_OK)
 def reading_dishes(menu_id: UUID, 
                submenu_id: UUID, 
                db: Session = Depends(get_db)):
@@ -65,7 +66,9 @@ def updating_dish(menu_id: UUID,
     return dish_to_update
 
 # Удалить блюдо
-@router.delete("/{dish_id}", response_model=schemas.DeleteMSG)
+@router.delete("/{dish_id}", 
+               response_model=schemas.DeleteMSG, 
+               status_code=status.HTTP_200_OK)
 def deleting_dish(menu_id: UUID, 
                 submenu_id: UUID, 
                 dish_id: UUID, 

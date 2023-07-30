@@ -1,5 +1,3 @@
-import pytest
-
 from fastapi.testclient import TestClient
 from menu_app.main import app
 
@@ -32,10 +30,10 @@ def test_create_menu():
     global test_menu_id
     test_menu_id = result["id"]
     assert isinstance(result["id"], str)
-    assert isinstance(result["submenus_count"], int)
-    assert isinstance(result["dishes_count"], int)
     assert result["title"] == created_menu["title"]
     assert result["description"] == created_menu["description"]
+    assert isinstance(result["submenus_count"], int)
+    assert isinstance(result["dishes_count"], int)
 
 
 def test_reading_menu():
@@ -43,10 +41,10 @@ def test_reading_menu():
     assert response.status_code == 200
     result = response.json()
     assert isinstance(result["id"], str)
-    assert isinstance(result["submenus_count"], int)
-    assert isinstance(result["dishes_count"], int)
     assert result["title"] == created_menu["title"]
     assert result["description"] == created_menu["description"]
+    assert isinstance(result["submenus_count"], int)
+    assert isinstance(result["dishes_count"], int)
 
 
 def test_updating_menu():
@@ -54,10 +52,10 @@ def test_updating_menu():
     assert response.status_code == 200
     result = response.json()
     assert isinstance(result["id"], str)
-    assert isinstance(result["submenus_count"], int)
-    assert isinstance(result["dishes_count"], int)
     assert result["title"] == updated_menu["title"]
     assert result["description"] == updated_menu["description"]
+    assert isinstance(result["submenus_count"], int)
+    assert isinstance(result["dishes_count"], int)
 
 
 def test_deleting_menu():
@@ -66,6 +64,12 @@ def test_deleting_menu():
     result = response.json()
     assert result["status"] == True
     assert result["message"] == "The menu has been deleted"
+
+
+def test_clean_base(cleanup_db):
+    response = client.get(f"{prefix}/")
+    assert response.status_code == 200
+    assert response.json() == []
 
 
 
