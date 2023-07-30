@@ -13,15 +13,15 @@ services:
     networks:
       - menu_network_test
 
-  web:
+  test_web:
     container_name: "test_web"
     image: test_web
     build:
       context: .
       dockerfile: Dockerfile
-    command: bash -c "pytest"
+    command: bash -c "pytest -v"
     ports:
-      - "8000:8000"
+      - "8001:8000"
     depends_on:
       db:
         condition: service_healthy
