@@ -1,9 +1,8 @@
 version: "3.10"
 services:
   db:
+    container_name: "test_db"
     image: postgres:15.1-alpine
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
     restart: always
     env_file: .env
     healthcheck:
@@ -12,23 +11,24 @@ services:
       timeout: 5s
       retries: 5
     networks:
-      - menu_network
+      - menu_network_test
 
   web:
+    container_name: "test_web"
+    image: test_web
     build:
       context: .
       dockerfile: Dockerfile
-    command: bash -c "uvicorn menu_app.main:app --host 0.0.0.0 --port 8000 --reload"
+    command: bash -c "pytest"
     ports:
       - "8000:8000"
     depends_on:
       db:
         condition: service_healthy
     networks:
-      - menu_network
+      - menu_network_test
 
 networks:
-  menu_network:
+  menu_network_test:
     driver: bridge
-volumes:
-  postgres_data:
+

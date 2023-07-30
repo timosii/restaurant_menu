@@ -1,16 +1,10 @@
 from .config import settings
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
-from fastapi import Depends
-from typing_extensions import Annotated
 
 
 def get_url():
-    if settings.TESTING:
-        db = settings.TEST_DB_NAME
-    else:
-        db = settings.POSTGRES_DB
-    
+    db = settings.POSTGRES_DB    
     user = settings.POSTGRES_USER
     password = settings.POSTGRES_PASSWORD
     hostname = settings.POSTGRES_HOST
