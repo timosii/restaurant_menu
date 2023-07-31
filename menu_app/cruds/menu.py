@@ -1,5 +1,4 @@
 from .. import models, schemas
-from sqlalchemy import func
 from uuid import UUID, uuid4
 from sqlalchemy.orm import Session
 from menu_app.errors import not_found, message_deleted
@@ -40,7 +39,9 @@ def delete_menu(db: Session, menu_id: UUID):
     return message_deleted(SAMPLE)
 
 
-def update_menu(db: Session, menu: schemas.MenuIn, menu_id: UUID):
+def update_menu(db: Session,
+                menu: schemas.MenuIn,
+                menu_id: UUID):
     db_menu = get_menu(db, menu_id=menu_id)
     if db_menu is None:
         not_found(SAMPLE)
@@ -51,11 +52,3 @@ def update_menu(db: Session, menu: schemas.MenuIn, menu_id: UUID):
     db.add(updated_menu)
     db.commit()
     return updated_menu
-
-
-def submenu_dish_count(db: Session, menu_id: UUID):
-    submenus = db.query(func.count()).select_from(models.Menu).join(models.Submenu, models.Menu.id == models.Submenu.parent_menu_id).filter(models.Menu.id == menu_id).scalar()
-
-    dishes = db.query(func.count()).select_from(models.Menu).join(models.Submenu, models.Menu.id == models.Submenu.parent_menu_id).outerjoin(models.Dish, models.Submenu.id == models.Dish.parent_submenu_id).filter(models.Menu.id == menu_id).scalar()
-
-    return submenus, dishes
