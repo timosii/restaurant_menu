@@ -44,7 +44,8 @@ def test_create_menu(cleanup_db):
 
 
 def test_create_submenu():
-    response = client.post(f"{prefix}/{test_menu_id}/submenus", json=created_submenu)
+    response = client.post(f'{prefix}/{test_menu_id}/submenus',
+                           json=created_submenu)
     assert response.status_code == 201
     result = response.json()
     global test_submenu_id
@@ -57,7 +58,9 @@ def test_create_submenu():
 
 
 def test_create_dish_1():
-    response = client.post(f"{prefix}/{test_menu_id}/submenus/{test_submenu_id}/dishes", json=created_dish_1)
+    response = client.post(f'{prefix}/{test_menu_id}/submenus/'
+                           f'{test_submenu_id}/dishes',
+                           json=created_dish_1)
     assert response.status_code == 201
     result = response.json()
     global test_dish_id_1
@@ -69,7 +72,9 @@ def test_create_dish_1():
 
 
 def test_create_dish_2():
-    response = client.post(f"{prefix}/{test_menu_id}/submenus/{test_submenu_id}/dishes", json=created_dish_2)
+    response = client.post(f'{prefix}/{test_menu_id}/submenus/'
+                           f'{test_submenu_id}/dishes',
+                           json=created_dish_2)
     assert response.status_code == 201
     result = response.json()
     global test_dish_id_2
@@ -94,7 +99,8 @@ def test_reading_menu():
 
 
 def test_reading_submenu():
-    response = client.get(f"{prefix}/{test_menu_id}/submenus/{test_submenu_id}")
+    response = client.get(f'{prefix}/{test_menu_id}/submenus/'
+                          f'{test_submenu_id}')
     assert response.status_code == 200
     result = response.json()
     assert isinstance(result["id"], str)
@@ -105,7 +111,8 @@ def test_reading_submenu():
 
 
 def test_deleting_submenu():
-    response = client.delete(f"{prefix}/{test_menu_id}/submenus/{test_submenu_id}")
+    response = client.delete(f'{prefix}/{test_menu_id}/submenus/'
+                             f'{test_submenu_id}')
     assert response.status_code == 200
     result = response.json()
     assert result["status"] is True
@@ -119,7 +126,8 @@ def test_reading_submenus():
 
 
 def test_reading_dishes():
-    response = client.get(f"{prefix}/{test_menu_id}/submenus/{test_submenu_id}/dishes")
+    response = client.get(f'{prefix}/{test_menu_id}/submenus/'
+                          f'{test_submenu_id}/dishes')
     assert response.status_code == 200
     assert response.json() == []
 

@@ -23,7 +23,7 @@ def test_reading_menus(cleanup_db):
 
 
 def test_create_menu():
-    response = client.post(f"{prefix}/", json=created_menu)
+    response = client.post(f'{prefix}/', json=created_menu)
     assert response.status_code == 201
     result = response.json()
     global test_menu_id

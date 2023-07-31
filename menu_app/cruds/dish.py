@@ -9,15 +9,15 @@ SAMPLE = 'dish'
 
 def get_dishes(db: Session,
                submenu_id: UUID):
-    current_dishes = db.query(models.Dish).\
-        filter(models.Dish.parent_submenu_id == submenu_id).all()
+    current_dishes = db.query(models.Dish).filter(
+        models.Dish.parent_submenu_id == submenu_id).all()
     return current_dishes
 
 
 def get_dish(db: Session,
              dish_id: UUID):
-    current_dish = db.query(models.Dish).\
-        filter(models.Dish.id == dish_id).first()
+    current_dish = db.query(models.Dish).filter(
+        models.Dish.id == dish_id).first()
     if current_dish is None:
         not_found(SAMPLE)
     return current_dish

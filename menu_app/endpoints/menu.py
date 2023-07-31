@@ -30,8 +30,8 @@ def reading_menus(db: Session = Depends(get_db)):
 def creating_menu(menu: schemas.MenuIn,
                   db: Session = Depends(get_db)):
     db_output = create_menu(db=db, menu=menu)
-    db_output.submenus_count, db_output.dishes_count =\
-        submenu_dish_count(db=db, menu_id=db_output.id)
+    db_output.submenus_count, db_output.dishes_count = submenu_dish_count(
+        db=db, menu_id=db_output.id)
     return db_output
 
 
@@ -39,8 +39,8 @@ def creating_menu(menu: schemas.MenuIn,
             response_model=schemas.MenuOut)
 def reading_menu(menu_id: UUID, db: Session = Depends(get_db)):
     db_menu = get_menu(db, menu_id=menu_id)
-    db_menu.submenus_count, db_menu.dishes_count =\
-        submenu_dish_count(db=db, menu_id=db_menu.id)
+    db_menu.submenus_count, db_menu.dishes_count = submenu_dish_count(
+        db=db, menu_id=db_menu.id)
     return db_menu
 
 
@@ -57,6 +57,7 @@ def deleting_menu(menu_id: UUID,
 def updating_menu(menu: schemas.MenuIn,
                   menu_id: UUID, db: Session = Depends(get_db)):
     updated_menu = update_menu(db=db, menu=menu, menu_id=menu_id)
-    updated_menu.submenus_count, updated_menu.dishes_count =\
-        submenu_dish_count(db=db, menu_id=updated_menu.id)
+    updated_menu.submenus_count,\
+        updated_menu.dishes_count = submenu_dish_count(
+            db=db, menu_id=updated_menu.id)
     return updated_menu
