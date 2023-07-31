@@ -11,7 +11,6 @@ created_dish = {
     "price": "12.50"
 }
 
-
 updated_dish = {
     "title": "My updated dish 1",
     "description": "My updated dish description 1",
@@ -19,9 +18,9 @@ updated_dish = {
 }
 
 
-def test_reading_dishes(create_test_submenu_for_dish_test):
+def test_reading_dishes(get_submenuid_for_dish_test):
     global test_menu_id, test_submenu_id
-    test_menu_id, test_submenu_id = create_test_submenu_for_dish_test
+    test_menu_id, test_submenu_id = get_submenuid_for_dish_test
     response = client.get(f"{prefix}/{test_menu_id}/submenus/{test_submenu_id}/dishes")
     assert response.status_code == 200
     assert response.json() == []
@@ -65,6 +64,13 @@ def test_deleting_dish():
     result = response.json()
     assert result["status"] == True
     assert result["message"] == "The dish has been deleted"
+
+
+def test_reading_missing_dish():
+    response = client.get(f"{prefix}/{test_menu_id}/submenus/{test_submenu_id}/dishes/{test_dish_id}")
+    assert response.status_code == 404
+    result = response.json()
+    assert result["detail"] == "dish not found"
 
 
 def test_clean_base(cleanup_db):

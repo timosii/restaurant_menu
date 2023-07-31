@@ -1,10 +1,9 @@
 from fastapi.testclient import TestClient
 from menu_app.main import app
 
+client = TestClient(app)
 
 prefix = '/api/v1/menus'
-
-client = TestClient(app)
 
 created_menu = {
     "title": "My menu 1",
@@ -65,6 +64,12 @@ def test_deleting_menu():
     assert result["status"] == True
     assert result["message"] == "The menu has been deleted"
 
+
+def test_reading_missing_menu():
+    response = client.get(f"{prefix}/{test_menu_id}")
+    assert response.status_code == 404
+    result = response.json()
+    assert result["detail"] == "menu not found"
 
 def test_clean_base(cleanup_db):
     response = client.get(f"{prefix}/")

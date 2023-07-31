@@ -3,12 +3,12 @@ from menu_app.main import app
 
 client = TestClient(app)
 
+prefix = '/api/v1/menus'
+
 created_submenu = {
     "title": "My submenu 1",
     "description": "My submenu description 1"
 }
-
-prefix = '/api/v1/menus'
 
 updated_submenu = {
     "title": "My updated submenu 1",
@@ -16,9 +16,9 @@ updated_submenu = {
 }
 
 
-def test_reading_submenus(create_test_menu_for_submenu_test):
+def test_reading_submenus(get_menuid_for_submenu_test):
     global test_menu_id
-    test_menu_id = create_test_menu_for_submenu_test
+    test_menu_id = get_menuid_for_submenu_test
     response = client.get(f"{prefix}/{test_menu_id}/submenus")
     assert response.status_code == 200
     assert response.json() == []
@@ -62,6 +62,14 @@ def test_deleting_submenu():
     result = response.json()
     assert result["status"] == True
     assert result["message"] == "The submenu has been deleted"
+
+
+def test_reading_missing_submenu():
+    response = client.get(f"{prefix}/{test_menu_id}/submenus/{test_submenu_id}")
+    assert response.status_code == 404
+    result = response.json()
+    assert result["detail"] == "submenu not found"
+
 
 def test_clean_base(cleanup_db):
     response = client.get(f"{prefix}/")

@@ -6,21 +6,14 @@ from menu_app.main import app
 
 client = TestClient(app)
 
-created_menu_for_submenu_test = {
+created_menu_for_submenu_test = created_submenu_for_dish_test = {
     "title": "My submenu 1",
     "description": "My submenu description 1"
 }
-
 
 created_menu_for_dish_test = {
     "title": "My menu 1",
     "description": "My menu description 1"
-}
-
-
-created_submenu_for_dish_test = {
-    "title": "My submenu 1",
-    "description": "My submenu description 1"
 }
 
 
@@ -32,7 +25,7 @@ def cleanup_db():
 
 
 @pytest.fixture
-def create_test_menu_for_submenu_test():
+def get_menuid_for_submenu_test():
     response = client.post(f"/api/v1/menus/", 
                            json=created_menu_for_submenu_test)
     result = response.json()
@@ -41,7 +34,7 @@ def create_test_menu_for_submenu_test():
 
 
 @pytest.fixture
-def create_test_menu_for_dish_test():
+def get_menuid_for_dish_test():
     response = client.post(f"/api/v1/menus/", 
                            json=created_menu_for_dish_test)
     result = response.json()
@@ -50,8 +43,8 @@ def create_test_menu_for_dish_test():
 
 
 @pytest.fixture
-def create_test_submenu_for_dish_test(create_test_menu_for_dish_test):
-    test_menu_id = create_test_menu_for_dish_test
+def get_submenuid_for_dish_test(get_menuid_for_dish_test):
+    test_menu_id = get_menuid_for_dish_test
     response = client.post(f"/api/v1/menus/{test_menu_id}/submenus", 
                            json=created_submenu_for_dish_test)
     result = response.json()
