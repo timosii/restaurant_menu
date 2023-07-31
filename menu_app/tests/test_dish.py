@@ -21,15 +21,13 @@ updated_dish = {
 def test_reading_dishes(get_submenuid_for_dish_test):
     global test_menu_id, test_submenu_id
     test_menu_id, test_submenu_id = get_submenuid_for_dish_test
-    response = client.get(f"{prefix}/{test_menu_id}\
-                          /submenus/{test_submenu_id}/dishes")
+    response = client.get(f"{prefix}/{test_menu_id}/submenus/{test_submenu_id}/dishes")
     assert response.status_code == 200
     assert response.json() == []
 
 
 def test_create_dish():
-    response = client.post(f"{prefix}/{test_menu_id}/submenus/\
-                           {test_submenu_id}/dishes", json=created_dish)
+    response = client.post(f"{prefix}/{test_menu_id}/submenus/{test_submenu_id}/dishes", json=created_dish)
     assert response.status_code == 201
     result = response.json()
     global test_dish_id
@@ -41,8 +39,7 @@ def test_create_dish():
 
 
 def test_reading_dish():
-    response = client.get(f"{prefix}/{test_menu_id}\
-                          /submenus/{test_submenu_id}/dishes/{test_dish_id}")
+    response = client.get(f"{prefix}/{test_menu_id}/submenus/{test_submenu_id}/dishes/{test_dish_id}")
     assert response.status_code == 200
     result = response.json()
     assert isinstance(result["id"], str)
@@ -52,9 +49,7 @@ def test_reading_dish():
 
 
 def test_updating_dish():
-    response = client.patch(f"{prefix}/{test_menu_id}\
-                            /submenus/{test_submenu_id}\
-                            /dishes/{test_dish_id}", json=updated_dish)
+    response = client.patch(f"{prefix}/{test_menu_id}/submenus/{test_submenu_id}/dishes/{test_dish_id}", json=updated_dish)
     assert response.status_code == 200
     result = response.json()
     assert isinstance(result["id"], str)
@@ -64,9 +59,7 @@ def test_updating_dish():
 
 
 def test_deleting_dish():
-    response = client.delete(f"{prefix}/{test_menu_id}\
-                             /submenus/{test_submenu_id}\
-                                /dishes/{test_dish_id}")
+    response = client.delete(f"{prefix}/{test_menu_id}/submenus/{test_submenu_id}/dishes/{test_dish_id}")
     assert response.status_code == 200
     result = response.json()
     assert result["status"] is True
@@ -74,8 +67,7 @@ def test_deleting_dish():
 
 
 def test_reading_missing_dish():
-    response = client.get(f"{prefix}/{test_menu_id}\
-                          /submenus/{test_submenu_id}/dishes/{test_dish_id}")
+    response = client.get(f"{prefix}/{test_menu_id}/submenus/{test_submenu_id}/dishes/{test_dish_id}")
     assert response.status_code == 404
     result = response.json()
     assert result["detail"] == "dish not found"

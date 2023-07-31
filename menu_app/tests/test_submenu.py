@@ -25,8 +25,7 @@ def test_reading_submenus(get_menuid_for_submenu_test):
 
 
 def test_create_submenu():
-    response = client.post(f"{prefix}/{test_menu_id}\
-                           /submenus", json=created_submenu)
+    response = client.post(f"{prefix}/{test_menu_id}/submenus", json=created_submenu)
     assert response.status_code == 201
     result = response.json()
     global test_submenu_id
@@ -38,8 +37,7 @@ def test_create_submenu():
 
 
 def test_reading_submenu():
-    response = client.get(f"{prefix}/{test_menu_id}\
-                          /submenus/{test_submenu_id}")
+    response = client.get(f"{prefix}/{test_menu_id}/submenus/{test_submenu_id}")
     assert response.status_code == 200
     result = response.json()
     assert isinstance(result["id"], str)
@@ -49,8 +47,7 @@ def test_reading_submenu():
 
 
 def test_updating_submenu():
-    response = client.patch(f"{prefix}/{test_menu_id}\
-                            /submenus/{test_submenu_id}", json=updated_submenu)
+    response = client.patch(f"{prefix}/{test_menu_id}/submenus/{test_submenu_id}", json=updated_submenu)
     assert response.status_code == 200
     result = response.json()
     assert isinstance(result["id"], str)
@@ -60,8 +57,7 @@ def test_updating_submenu():
 
 
 def test_deleting_submenu():
-    response = client.delete(f"{prefix}/{test_menu_id}\
-                             /submenus/{test_submenu_id}")
+    response = client.delete(f"{prefix}/{test_menu_id}/submenus/{test_submenu_id}")
     assert response.status_code == 200
     result = response.json()
     assert result["status"] is True
@@ -69,8 +65,7 @@ def test_deleting_submenu():
 
 
 def test_reading_missing_submenu():
-    response = client.get(f"{prefix}/{test_menu_id}\
-                          /submenus/{test_submenu_id}")
+    response = client.get(f"{prefix}/{test_menu_id}/submenus/{test_submenu_id}")
     assert response.status_code == 404
     result = response.json()
     assert result["detail"] == "submenu not found"
