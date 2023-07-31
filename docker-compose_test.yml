@@ -10,7 +10,7 @@ services:
       POSTGRES_HOST: test_database
       POSTGRES_PORT: 5432
       POSTGRES_DB: test_db
-    command: bash -c "pytest -v"
+    command: pytest -v
     ports:
       - "8001:8000"
     depends_on:
