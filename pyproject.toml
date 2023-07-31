@@ -16,8 +16,6 @@ pydantic-settings = "^2.0.2"
 pytest = "^7.4.0"
 httpx = "^0.24.1"
 
-[tool.poetry.dev-dependencies]
-
 [tool.poetry.group.dev.dependencies]
 flake8 = "^6.1.0"
 

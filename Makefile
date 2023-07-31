@@ -8,7 +8,7 @@ app:
 	docker-compose up -d
 
 test:
-	docker-compose -f docker-compose_test.yml up -d
+	docker-compose -f docker-compose_test.yml up
 
 test-start:
 	docker-compose -f docker-compose_test.yml start
