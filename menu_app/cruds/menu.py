@@ -1,5 +1,5 @@
-from . import submenu as sub_count
 from .. import models, schemas
+from sqlalchemy import func
 from uuid import UUID, uuid4
 from sqlalchemy.orm import Session
 from menu_app.errors import not_found, message_deleted
@@ -54,9 +54,8 @@ def update_menu(db: Session, menu: schemas.MenuIn, menu_id: UUID):
 
 
 def submenu_dish_count(db: Session, menu_id: UUID):
-    submenus = db.query(models.Submenu).filter(
-        models.Submenu.parent_menu_id == menu_id).all()
-    dishes = 0
-    for submenu in submenus:
-        dishes += sub_count.dish_count(db, submenu.id)
-    return len(submenus), dishes
+    submenus = db.query(func.count()).select_from(models.Menu).join(models.Submenu, models.Menu.id == models.Submenu.parent_menu_id).filter(models.Menu.id == menu_id).scalar()
+
+    dishes = db.query(func.count()).select_from(models.Menu).join(models.Submenu, models.Menu.id == models.Submenu.parent_menu_id).outerjoin(models.Dish, models.Submenu.id == models.Dish.parent_submenu_id).filter(models.Menu.id == menu_id).scalar()
+
+    return submenus, dishes

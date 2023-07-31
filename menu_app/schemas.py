@@ -1,4 +1,6 @@
 from pydantic import BaseModel, UUID4
+from cruds.menu import submenu_dish_count
+from cruds.submenu import dish_count
 
 
 class MenuIn(BaseModel):
@@ -10,7 +12,7 @@ class MenuOut(BaseModel):
     id: UUID4
     title: str
     description: str
-    submenus_count: int
+    submenus_count: int = 
     dishes_count: int
 
 
