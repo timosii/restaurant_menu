@@ -8,10 +8,9 @@ def get_url():
     password = settings.POSTGRES_PASSWORD
     hostname = settings.POSTGRES_HOST
     port = settings.POSTGRES_PORT
-    db = settings.POSTGRES_DB    
-  
-        
+    db = settings.POSTGRES_DB
     return f"postgresql://{user}:{password}@{hostname}:{port}/{db}"
+
 
 SQLALCHEMY_DATABASE_URL = get_url()
 
@@ -20,7 +19,7 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()
 
-# Dependency
+
 def get_db():
     db = SessionLocal()
     try:

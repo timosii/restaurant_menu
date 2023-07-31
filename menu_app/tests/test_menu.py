@@ -61,7 +61,7 @@ def test_deleting_menu():
     response = client.delete(f"{prefix}/{test_menu_id}")
     assert response.status_code == 200
     result = response.json()
-    assert result["status"] == True
+    assert result["status"] is True
     assert result["message"] == "The menu has been deleted"
 
 
@@ -71,13 +71,8 @@ def test_reading_missing_menu():
     result = response.json()
     assert result["detail"] == "menu not found"
 
+
 def test_clean_base(cleanup_db):
     response = client.get(f"{prefix}/")
     assert response.status_code == 200
     assert response.json() == []
-
-
-
-
-
-

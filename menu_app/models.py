@@ -13,7 +13,7 @@ class Menu(Base):
     submenus_count = Column(Integer, default=0)
     dishes_count = Column(Integer, default=0)
 
-    submenus = relationship("Submenu", 
+    submenus = relationship("Submenu",
                             back_populates='menu',
                             cascade="all, delete")
 
@@ -28,7 +28,7 @@ class Submenu(Base):
     dishes_count = Column(Integer, default=0)
 
     menu = relationship("Menu", back_populates="submenus")
-    dishes = relationship("Dish", 
+    dishes = relationship("Dish",
                           back_populates="submenu",
                           cascade="all, delete")
 
@@ -42,6 +42,5 @@ class Dish(Base):
     price = Column(Numeric(scale=2))
     parent_submenu_id = Column(UUID, ForeignKey("submenus.id"))
 
-    submenu = relationship("Submenu", 
+    submenu = relationship("Submenu",
                            back_populates="dishes")
-    

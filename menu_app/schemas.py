@@ -6,7 +6,7 @@ class MenuIn(BaseModel):
     description: str
 
 
-class MenuOut(BaseModel):    
+class MenuOut(BaseModel):
     id: UUID4
     title: str
     description: str
@@ -17,7 +17,7 @@ class MenuOut(BaseModel):
 class SubmenuIn(BaseModel):
     title: str
     description: str
-    
+
 
 class SubmenuOut(BaseModel):
     id: UUID4
@@ -42,4 +42,3 @@ class DishOut(BaseModel):
 class DeleteMSG(BaseModel):
     status: bool
     message: str
-    

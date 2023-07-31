@@ -26,7 +26,7 @@ def cleanup_db():
 
 @pytest.fixture
 def get_menuid_for_submenu_test():
-    response = client.post(f"/api/v1/menus/", 
+    response = client.post("/api/v1/menus/",
                            json=created_menu_for_submenu_test)
     result = response.json()
     test_menu_id = result["id"]
@@ -35,7 +35,7 @@ def get_menuid_for_submenu_test():
 
 @pytest.fixture
 def get_menuid_for_dish_test():
-    response = client.post(f"/api/v1/menus/", 
+    response = client.post("/api/v1/menus/",
                            json=created_menu_for_dish_test)
     result = response.json()
     test_menu_id = result["id"]
@@ -45,7 +45,7 @@ def get_menuid_for_dish_test():
 @pytest.fixture
 def get_submenuid_for_dish_test(get_menuid_for_dish_test):
     test_menu_id = get_menuid_for_dish_test
-    response = client.post(f"/api/v1/menus/{test_menu_id}/submenus", 
+    response = client.post(f"/api/v1/menus/{test_menu_id}/submenus",
                            json=created_submenu_for_dish_test)
     result = response.json()
     test_submenu_id = result["id"]

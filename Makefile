@@ -1,5 +1,5 @@
 install:
-	poetry install
+	poetry install --without dev
 
 connect:
 	poetry run uvicorn menu_app.main:app --reload
