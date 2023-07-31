@@ -4,7 +4,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    command: uvicorn menu_app.main:app --host 0.0.0.0 --port 8000 --reload
+    volumes:
+      - .:/code
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 123
@@ -13,6 +14,7 @@ services:
       POSTGRES_DB: menu_db
     ports:
       - "8000:8000"
+    command: uvicorn menu_app.main:app --host 0.0.0.0 --port 8000 --reload
     depends_on:
       db:
         condition: service_healthy
