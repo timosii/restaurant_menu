@@ -1,22 +1,20 @@
-from .. import schemas, models
+from ..schemas import SubmenuOut, SubmenuIn, DeleteMSG
 from ..cruds.submenu import (get_submenu,
                              get_submenus,
                              create_submenu,
                              update_submenu,
                              delete_submenu)
 from ..cruds.counts import dish_for_submenu_count
-from ..database import engine, get_db
+from ..database import get_db
 from uuid import UUID
 from sqlalchemy.orm import Session
 from fastapi import Depends, status, APIRouter
 
 
-models.Base.metadata.create_all(bind=engine)
-
 router = APIRouter(prefix="/api/v1/menus/{menu_id}/submenus")
 
 
-@router.get("/", response_model=list[schemas.SubmenuOut],
+@router.get("/", response_model=list[SubmenuOut],
             status_code=status.HTTP_200_OK)
 def reading_submenus(menu_id: UUID,
                      db: Session = Depends(get_db)):
@@ -28,7 +26,7 @@ def reading_submenus(menu_id: UUID,
 
 
 @router.get("/{submenu_id}",
-            response_model=schemas.SubmenuOut)
+            response_model=SubmenuOut)
 def reading_submenu(submenu_id: UUID,
                     db: Session = Depends(get_db)):
     db_submenu = get_submenu(db, submenu_id=submenu_id)
@@ -37,10 +35,10 @@ def reading_submenu(submenu_id: UUID,
     return db_submenu
 
 
-@router.post("/", response_model=schemas.SubmenuOut,
+@router.post("/", response_model=SubmenuOut,
              status_code=status.HTTP_201_CREATED)
 def creating_submenu(menu_id: UUID,
-                     submenu: schemas.SubmenuIn,
+                     submenu: SubmenuIn,
                      db: Session = Depends(get_db)):
     db_submenu = create_submenu(db, submenu=submenu, menu_id=menu_id)
     db_submenu.dishes_count = dish_for_submenu_count(
@@ -49,10 +47,10 @@ def creating_submenu(menu_id: UUID,
 
 
 @router.patch("/{submenu_id}",
-              response_model=schemas.SubmenuOut)
+              response_model=SubmenuOut)
 def updating_submenu(menu_id: UUID,
                      submenu_id: UUID,
-                     submenu_update: schemas.SubmenuIn,
+                     submenu_update: SubmenuIn,
                      db: Session = Depends(get_db)):
     updated_submenu = update_submenu(menu_id,
                                      submenu_id,
@@ -64,7 +62,7 @@ def updating_submenu(menu_id: UUID,
 
 
 @router.delete("/{submenu_id}",
-               response_model=schemas.DeleteMSG,
+               response_model=DeleteMSG,
                status_code=status.HTTP_200_OK)
 def deleting_submenu(menu_id: UUID,
                      submenu_id: UUID,

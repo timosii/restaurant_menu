@@ -1,28 +1,29 @@
-from .. import models, schemas
+from ..schemas import MenuIn
+from ..models import Menu
+from .errors import not_found, message_deleted
 from uuid import UUID, uuid4
 from sqlalchemy.orm import Session
-from menu_app.errors import not_found, message_deleted
 
 
 SAMPLE = 'menu'
 
 
 def get_menus(db: Session):
-    return db.query(models.Menu).all()
+    return db.query(Menu).all()
 
 
 def get_menu(db: Session, menu_id: UUID):
-    db_menu = db.query(models.Menu).filter(
-        models.Menu.id == menu_id).first()
+    db_menu = db.query(Menu).filter(
+        Menu.id == menu_id).first()
     if db_menu is None:
         not_found(SAMPLE)
     return db_menu
 
 
-def create_menu(db: Session, menu: schemas.MenuIn):
-    db_menu = models.Menu(id=uuid4(),
-                          title=menu.title,
-                          description=menu.description)
+def create_menu(db: Session, menu: MenuIn):
+    db_menu = Menu(id=uuid4(),
+                   title=menu.title,
+                   description=menu.description)
     db.add(db_menu)
     db.commit()
     db.refresh(db_menu)
@@ -30,8 +31,8 @@ def create_menu(db: Session, menu: schemas.MenuIn):
 
 
 def delete_menu(db: Session, menu_id: UUID):
-    menu_for_delete = db.query(models.Menu).filter(
-        models.Menu.id == menu_id).first()
+    menu_for_delete = db.query(Menu).filter(
+        Menu.id == menu_id).first()
     if menu_for_delete is None:
         not_found(SAMPLE)
     db.delete(menu_for_delete)
@@ -40,13 +41,13 @@ def delete_menu(db: Session, menu_id: UUID):
 
 
 def update_menu(db: Session,
-                menu: schemas.MenuIn,
+                menu: MenuIn,
                 menu_id: UUID):
     db_menu = get_menu(db, menu_id=menu_id)
     if db_menu is None:
         not_found(SAMPLE)
-    updated_menu = db.query(models.Menu).filter(
-        models.Menu.id == menu_id).first()
+    updated_menu = db.query(Menu).filter(
+        Menu.id == menu_id).first()
     updated_menu.title = menu.title
     updated_menu.description = menu.description
     db.add(updated_menu)

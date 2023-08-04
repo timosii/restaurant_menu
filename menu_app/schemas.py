@@ -1,41 +1,39 @@
 from pydantic import BaseModel, UUID4
 
 
-class MenuIn(BaseModel):
+class BaseItemIn(BaseModel):
     title: str
     description: str
 
 
-class MenuOut(BaseModel):
+class MenuIn(BaseItemIn):
+    pass
+
+
+class SubmenuIn(BaseItemIn):
+    pass
+
+
+class DishIn(BaseItemIn):
+    price: str
+
+
+class BaseItemOut(BaseModel):
     id: UUID4
     title: str
     description: str
+
+
+class MenuOut(BaseItemOut):
     submenus_count: int
     dishes_count: int
 
 
-class SubmenuIn(BaseModel):
-    title: str
-    description: str
-
-
-class SubmenuOut(BaseModel):
-    id: UUID4
-    title: str
-    description: str
+class SubmenuOut(BaseItemOut):
     dishes_count: int
 
 
-class DishIn(BaseModel):
-    title: str
-    description: str
-    price: str
-
-
-class DishOut(BaseModel):
-    id: UUID4
-    title: str
-    description: str
+class DishOut(BaseItemOut):
     price: str
 
 

@@ -1,21 +1,20 @@
-from .. import schemas, models
+from ..schemas import DishOut, DishIn, DeleteMSG
 from ..cruds.dish import (get_dish,
                           get_dishes,
                           create_dish,
                           update_dish,
                           delete_dish)
-from ..database import engine, get_db
+from ..database import get_db
 from uuid import UUID
 from sqlalchemy.orm import Session
 from fastapi import Depends, status, APIRouter
 
 
-models.Base.metadata.create_all(bind=engine)
 prefix = "/api/v1/menus/{menu_id}/submenus/{submenu_id}/dishes"
 router = APIRouter(prefix=prefix)
 
 
-@router.get('/', response_model=list[schemas.DishOut],
+@router.get('/', response_model=list[DishOut],
             status_code=status.HTTP_200_OK)
 def reading_dishes(menu_id: UUID,
                    submenu_id: UUID,
@@ -27,7 +26,7 @@ def reading_dishes(menu_id: UUID,
 
 
 @router.get("/{dish_id}",
-            response_model=schemas.DishOut)
+            response_model=DishOut)
 def reading_dish(dish_id: UUID,
                  db: Session = Depends(get_db)):
     current_dish = get_dish(dish_id=dish_id, db=db)
@@ -35,11 +34,11 @@ def reading_dish(dish_id: UUID,
     return current_dish
 
 
-@router.post("/", response_model=schemas.DishOut,
+@router.post("/", response_model=DishOut,
              status_code=status.HTTP_201_CREATED)
 def creating_dish(menu_id: UUID,
                   submenu_id: UUID,
-                  dish: schemas.DishIn,
+                  dish: DishIn,
                   db: Session = Depends(get_db)):
     current_dish = create_dish(menu_id=menu_id,
                                submenu_id=submenu_id,
@@ -50,11 +49,11 @@ def creating_dish(menu_id: UUID,
 
 
 @router.patch("/{dish_id}",
-              response_model=schemas.DishOut)
+              response_model=DishOut)
 def updating_dish(menu_id: UUID,
                   submenu_id: UUID,
                   dish_id: UUID,
-                  dish: schemas.DishIn,
+                  dish: DishIn,
                   db: Session = Depends(get_db)):
     dish_to_update = update_dish(menu_id=menu_id,
                                  submenu_id=submenu_id,
@@ -66,7 +65,7 @@ def updating_dish(menu_id: UUID,
 
 
 @router.delete("/{dish_id}",
-               response_model=schemas.DeleteMSG,
+               response_model=DeleteMSG,
                status_code=status.HTTP_200_OK)
 def deleting_dish(menu_id: UUID,
                   submenu_id: UUID,
