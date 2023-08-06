@@ -23,7 +23,7 @@ services:
 
   test_database:
     image: postgres:15.1-alpine
-    restart: always
+    # restart: always
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 123

@@ -13,7 +13,7 @@ def not_found(subject: str) -> NoReturn:
                         detail=f"{subject} not found")
 
 
-def message_deleted(subject: str):
+def success_delete(subject: str):
     return JSONResponse(status_code=200,
                         content={"status": True,
                                  "message": f"The {subject} has been deleted"})

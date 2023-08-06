@@ -1,13 +1,7 @@
 from ..schemas import DishOut, DishIn, DeleteMSG
-from ..cruds.dish import (get_dish,
-                          get_dishes,
-                          create_dish,
-                          update_dish,
-                          delete_dish)
-from ..database import get_db
 from uuid import UUID
-from sqlalchemy.orm import Session
 from fastapi import Depends, status, APIRouter
+from menu_app.repositories.dish_repository import DishRepository
 
 
 prefix = "/api/v1/menus/{menu_id}/submenus/{submenu_id}/dishes"
@@ -16,62 +10,38 @@ router = APIRouter(prefix=prefix)
 
 @router.get('/', response_model=list[DishOut],
             status_code=status.HTTP_200_OK)
-def reading_dishes(menu_id: UUID,
-                   submenu_id: UUID,
-                   db: Session = Depends(get_db)):
-    dishes = get_dishes(submenu_id=submenu_id, db=db)
-    for dish in dishes:
-        dish.price = str(dish.price)
-    return dishes
+def reading_dishes(submenu_id: UUID,
+                   dish: DishRepository = Depends()):
+    return dish.get_dishes(submenu_id)
 
 
 @router.get("/{dish_id}",
             response_model=DishOut)
 def reading_dish(dish_id: UUID,
-                 db: Session = Depends(get_db)):
-    current_dish = get_dish(dish_id=dish_id, db=db)
-    current_dish.price = str(current_dish.price)
-    return current_dish
+                 dish: DishRepository = Depends()):
+    return dish.get_dish(dish_id)
 
 
 @router.post("/", response_model=DishOut,
              status_code=status.HTTP_201_CREATED)
-def creating_dish(menu_id: UUID,
-                  submenu_id: UUID,
-                  dish: DishIn,
-                  db: Session = Depends(get_db)):
-    current_dish = create_dish(menu_id=menu_id,
-                               submenu_id=submenu_id,
-                               dish=dish,
-                               db=db)
-    current_dish.price = str(current_dish.price)
-    return current_dish
+def creating_dish(submenu_id: UUID,
+                  dish_data: DishIn,
+                  dish: DishRepository = Depends()):
+    return dish.create_dish(submenu_id=submenu_id, dish=dish_data)
 
 
 @router.patch("/{dish_id}",
               response_model=DishOut)
-def updating_dish(menu_id: UUID,
-                  submenu_id: UUID,
+def updating_dish(submenu_id: UUID,
                   dish_id: UUID,
-                  dish: DishIn,
-                  db: Session = Depends(get_db)):
-    dish_to_update = update_dish(menu_id=menu_id,
-                                 submenu_id=submenu_id,
-                                 dish_id=dish_id,
-                                 dish=dish,
-                                 db=db)
-    dish_to_update.price = str(dish_to_update.price)
-    return dish_to_update
+                  dish_data: DishIn,
+                  dish: DishRepository = Depends()):
+    return dish.update_dish(submenu_id, dish_id, dish_data)
 
 
 @router.delete("/{dish_id}",
                response_model=DeleteMSG,
                status_code=status.HTTP_200_OK)
-def deleting_dish(menu_id: UUID,
-                  submenu_id: UUID,
-                  dish_id: UUID,
-                  db: Session = Depends(get_db)):
-    return delete_dish(menu_id=menu_id,
-                       submenu_id=submenu_id,
-                       dish_id=dish_id,
-                       db=db)
+def deleting_dish(dish_id: UUID,
+                  dish: DishRepository = Depends()):
+    return dish.delete_dish(dish_id)
