@@ -24,15 +24,6 @@ class SubmenuRepository:
                 submenu_id=submenu.id)
         return submenus
 
-    def get_submenu(self, submenu_id: UUID):
-        current_submenu = self.session.query(Submenu).filter(
-            Submenu.id == submenu_id).first()
-        if current_submenu is None:
-            not_found(SAMPLE)
-        current_submenu.dishes_count = self.dish_for_submenu_count(
-                submenu_id=current_submenu.id)
-        return current_submenu
-
     def create_submenu(self,
                        submenu: SubmenuIn,
                        menu_id: UUID):
@@ -47,8 +38,16 @@ class SubmenuRepository:
             submenu_id=db_submenu.id)
         return db_submenu
 
-    def delete_submenu(self, menu_id: UUID,
-                       submenu_id: UUID):
+    def get_submenu(self, submenu_id: UUID):
+        current_submenu = self.session.query(Submenu).filter(
+            Submenu.id == submenu_id).first()
+        if current_submenu is None:
+            not_found(SAMPLE)
+        current_submenu.dishes_count = self.dish_for_submenu_count(
+                submenu_id=current_submenu.id)
+        return current_submenu
+
+    def delete_submenu(self, submenu_id: UUID):
         submenu_for_delete = self.session.query(Submenu).filter(
             Submenu.id == submenu_id).first()
         if submenu_for_delete is None:
