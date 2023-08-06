@@ -17,9 +17,10 @@ def reading_submenus(menu_id: UUID,
 @router.get("/{submenu_id}",
             response_model=SubmenuOut,
             status_code=status.HTTP_200_OK)
-def reading_submenu(submenu_id: UUID,
+def reading_submenu(menu_id: UUID,
+                    submenu_id: UUID,
                     submenu: SubmenuService = Depends()):
-    return submenu.get_one(submenu_id=submenu_id)
+    return submenu.get_one(menu_id=menu_id, submenu_id=submenu_id)
 
 
 @router.post("/", response_model=SubmenuOut,
@@ -44,6 +45,7 @@ def updating_submenu(menu_id: UUID,
 @router.delete("/{submenu_id}",
                response_model=DeleteMSG,
                status_code=status.HTTP_200_OK)
-def deleting_submenu(submenu_id: UUID,
+def deleting_submenu(menu_id: UUID,
+                     submenu_id: UUID,
                      submenu: SubmenuService = Depends()):
-    return submenu.delete(submenu_id=submenu_id)
+    return submenu.delete(menu_id=menu_id, submenu_id=submenu_id)
