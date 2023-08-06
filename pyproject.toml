@@ -15,6 +15,7 @@ uvicorn = "^0.23.1"
 pydantic-settings = "^2.0.2"
 pytest = "^7.4.0"
 httpx = "^0.24.1"
+redis = "^4.6.0"
 
 [tool.poetry.group.dev.dependencies]
 flake8 = "^6.1.0"
