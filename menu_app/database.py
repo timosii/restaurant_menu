@@ -1,6 +1,7 @@
-from .config import settings
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, declarative_base
+from sqlalchemy.orm import declarative_base, sessionmaker
+
+from .config import settings
 
 
 def get_url():
@@ -9,7 +10,7 @@ def get_url():
     hostname = settings.POSTGRES_HOST
     port = settings.POSTGRES_PORT
     db = settings.POSTGRES_DB
-    return f"postgresql://{user}:{password}@{hostname}:{port}/{db}"
+    return f'postgresql://{user}:{password}@{hostname}:{port}/{db}'
 
 
 SQLALCHEMY_DATABASE_URL = get_url()

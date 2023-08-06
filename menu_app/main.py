@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+
 from .endpoints import dish, menu, submenu
 
 app = FastAPI()

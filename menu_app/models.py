@@ -1,6 +1,7 @@
-from sqlalchemy import Column, ForeignKey, String, Numeric
-from sqlalchemy.orm import relationship
+from sqlalchemy import Column, ForeignKey, Numeric, String
 from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.orm import relationship
+
 from .database import Base, engine
 
 Base.metadata.create_all(bind=engine)
@@ -13,33 +14,33 @@ class Menu(Base):
     title = Column(String, unique=True)
     description = Column(String)
 
-    submenus = relationship("Submenu",
+    submenus = relationship('Submenu',
                             back_populates='menu',
-                            cascade="all, delete")
+                            cascade='all, delete')
 
 
 class Submenu(Base):
-    __tablename__ = "submenus"
+    __tablename__ = 'submenus'
 
     id = Column(UUID(as_uuid=True), primary_key=True)
     title = Column(String, unique=True)
     description = Column(String)
-    parent_menu_id = Column(UUID, ForeignKey("menus.id"))
+    parent_menu_id = Column(UUID, ForeignKey('menus.id'))
 
-    menu = relationship("Menu", back_populates="submenus")
-    dishes = relationship("Dish",
-                          back_populates="submenu",
-                          cascade="all, delete")
+    menu = relationship('Menu', back_populates='submenus')
+    dishes = relationship('Dish',
+                          back_populates='submenu',
+                          cascade='all, delete')
 
 
 class Dish(Base):
-    __tablename__ = "dishes"
+    __tablename__ = 'dishes'
 
     id = Column(UUID(as_uuid=True), primary_key=True)
     title = Column(String, unique=True)
     description = Column(String)
     price = Column(Numeric(scale=2))
-    parent_submenu_id = Column(UUID, ForeignKey("submenus.id"))
+    parent_submenu_id = Column(UUID, ForeignKey('submenus.id'))
 
-    submenu = relationship("Submenu",
-                           back_populates="dishes")
+    submenu = relationship('Submenu',
+                           back_populates='dishes')

@@ -1,86 +1,93 @@
-import redis
 import json
-from ..schemas import MenuOut, SubmenuOut, DishOut
-from typing import Optional
 from uuid import UUID
+
+import redis
 from fastapi.encoders import jsonable_encoder
 
+from ..schemas import DishOut, MenuOut, SubmenuOut
 
-class CacheMenu:
-    def __init__(self, host='localhost', port=6379, db=0):
+
+class CacheBase:
+    def __init__(self, host='localhost', port=6379, db=0) -> None:
         self.redis_conn = redis.Redis(host=host, port=port, db=db)
+
+    def save(self):
+        pass
+
+    def load(self):
+        pass
+
+    def check(self):
+        pass
+
+    def delete(self):
+        pass
+
+
+class CacheMenu(CacheBase):
 
     def save_cache(self, subject: MenuOut, menu_id: UUID) -> None:
         cache_data = jsonable_encoder(subject)
         self.redis_conn.set(f'menu:{menu_id}', json.dumps(cache_data))
 
-    def load_cache(self, menu_id: UUID) -> Optional[MenuOut]:
+    def load_cache(self, menu_id: UUID) -> MenuOut | None:
         cached_data = self.redis_conn.get(f'menu:{menu_id}')
         if cached_data:
             return MenuOut(**json.loads(cached_data))
         return None
 
-    def check_cache(self, menu_id: UUID) -> bool:
+    def check_cache(self, menu_id: UUID) -> int:
         return self.redis_conn.exists(f'menu:{menu_id}')
 
-    def delete_cache(self, menu_id: UUID):
+    def delete_cache(self, menu_id: UUID) -> None:
         self.redis_conn.delete(f'menu:{menu_id}')
-        for key in self.redis_conn.hkeys(hash(menu_id)):
-            self.redis_conn.hdel(hash(menu_id), key)
+        for key in self.redis_conn.hkeys(str(menu_id)):
+            self.redis_conn.hdel(str(menu_id), key)
 
 
-class CacheSubmenu:
-    def __init__(self, host='localhost', port=6379, db=0):
-        self.redis_conn = redis.Redis(host=host, port=port, db=db)
+class CacheSubmenu(CacheBase):
 
     def save_cache(self, subject: SubmenuOut,
                    menu_id: UUID, submenu_id: UUID) -> None:
-        cache_menu = CacheMenu()
-        cache_menu.delete_cache(menu_id=menu_id)
         cache_data = jsonable_encoder(subject)
-        self.redis_conn.hset(hash(menu_id), f'submenu:{submenu_id}',
+        self.redis_conn.hset(str(menu_id), f'submenu:{submenu_id}',
                              json.dumps(cache_data))
 
     def load_cache(self, menu_id: UUID,
-                   submenu_id: UUID) -> Optional[SubmenuOut]:
-        cached_data = self.redis_conn.hget(hash(menu_id),
+                   submenu_id: UUID) -> SubmenuOut | None:
+        cached_data = self.redis_conn.hget(str(menu_id),
                                            f'submenu:{submenu_id}')
         if cached_data:
             return SubmenuOut(**json.loads(cached_data))
         return None
 
-    def check_cache(self, menu_id: UUID, submenu_id: UUID) -> bool:
-        return self.redis_conn.hexists(hash(menu_id), f'submenu:{submenu_id}')
+    def check_cache(self, menu_id: UUID, submenu_id: UUID) -> int:
+        return self.redis_conn.hexists(str(menu_id), f'submenu:{submenu_id}')
 
     def delete_cache(self, menu_id: UUID, submenu_id: UUID) -> None:
-        self.redis_conn.delete(hash(menu_id), f'submenu:{submenu_id}')
-        for key in self.redis_conn.hkeys(hash(submenu_id)):
-            self.redis_conn.hdel(hash(submenu_id), key)
+        self.redis_conn.delete(str(menu_id), f'submenu:{submenu_id}')
+        for key in self.redis_conn.hkeys(str(submenu_id)):
+            self.redis_conn.hdel(str(submenu_id), key)
 
 
-class CacheDish:
-    def __init__(self, host='localhost', port=6379, db=0):
-        self.redis_conn = redis.Redis(host=host, port=port, db=db)
+class CacheDish(CacheBase):
 
     def save_cache(self, subject: DishOut,
-                   menu_id: UUID,
                    submenu_id: UUID,
                    dish_id: UUID) -> None:
-        cache_menu = CacheMenu()
-        cache_menu.delete_cache(menu_id=menu_id)
         cache_data = jsonable_encoder(subject)
-        self.redis_conn.hset(hash(submenu_id), f'dish:{dish_id}',
+        self.redis_conn.hset(str(submenu_id), f'dish:{dish_id}',
                              json.dumps(cache_data))
 
-    def load_cache(self, submenu_id: UUID, dish_id: UUID) -> Optional[DishOut]:
-        cached_data = self.redis_conn.hget(hash(submenu_id),
+    def load_cache(self, submenu_id: UUID, dish_id: UUID) -> DishOut | None:
+        cached_data = self.redis_conn.hget(str(submenu_id),
                                            f'dish:{dish_id}')
         if cached_data:
             return DishOut(**json.loads(cached_data))
         return None
 
     def check_cache(self, submenu_id: UUID, dish_id: UUID) -> bool:
-        return self.redis_conn.hexists(hash(submenu_id), f'dish:{dish_id}')
+        return self.redis_conn.hexists(str(submenu_id), f'dish:{dish_id}')
 
     def delete_cache(self, submenu_id: UUID, dish_id: UUID) -> None:
-        self.redis_conn.hdel(hash(submenu_id), f'dish:{dish_id}')
+        self.redis_conn.hdel(str(submenu_id), f'dish:{dish_id}')

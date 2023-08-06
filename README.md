@@ -1,7 +1,7 @@
 # Restaurant menu
 # Description
 
-Проект на FastAPI с использованием PostgreSQL в качестве БД. 
+Проект на FastAPI с использованием PostgreSQL в качестве БД.
 В проекте реализован REST API по работе с меню ресторана, все CRUD операции.
 
 # Install
@@ -13,7 +13,7 @@ git clone git@github.com:timosii/restaurant_menu.git
 - Переходим в папку с проектом
 ```
 cd restaurant_menu
-``` 
+```
 
 # Запуск в Docker
 

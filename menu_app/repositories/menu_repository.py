@@ -1,12 +1,14 @@
-from ..schemas import MenuIn
-from ..models import Menu, Submenu, Dish
-from .errors import not_found, success_delete
 from uuid import UUID, uuid4
-from sqlalchemy.orm import Session
-from ..database import get_db
-from fastapi import Depends
-from sqlalchemy import func
 
+from fastapi import Depends
+from fastapi.responses import JSONResponse
+from sqlalchemy import func
+from sqlalchemy.orm import Session
+
+from ..database import get_db
+from ..models import Dish, Menu, Submenu
+from ..schemas import MenuIn, MenuOut
+from .errors import not_found, success_delete
 
 SAMPLE = 'menu'
 
@@ -16,14 +18,14 @@ class MenuRepository:
         self.session = session
         self.model = Menu
 
-    def get_menus(self):
+    def get_menus(self) -> list[MenuOut]:
         menus = self.session.query(Menu).all()
         for menu in menus:
             menu.submenus_count = self.submenu_count(menu_id=menu.id)
             menu.dishes_count = self.dish_count(menu_id=menu.id)
         return menus
 
-    def create_menu(self, menu: MenuIn):
+    def create_menu(self, menu: MenuIn) -> MenuOut:
         db_menu = Menu(id=uuid4(),
                        title=menu.title,
                        description=menu.description)
@@ -34,7 +36,7 @@ class MenuRepository:
         db_menu.dishes_count = self.dish_count(menu_id=db_menu.id)
         return db_menu
 
-    def get_menu(self, menu_id: UUID):
+    def get_menu(self, menu_id: UUID) -> MenuOut:
         db_menu = self.session.query(Menu).filter(
             Menu.id == menu_id).first()
         if db_menu is None:
@@ -43,7 +45,7 @@ class MenuRepository:
         db_menu.dishes_count = self.dish_count(menu_id=db_menu.id)
         return db_menu
 
-    def delete_menu(self, menu_id: UUID):
+    def delete_menu(self, menu_id: UUID) -> JSONResponse:
         menu_for_delete = self.session.query(Menu).filter(
             Menu.id == menu_id).first()
         if menu_for_delete is None:
@@ -54,7 +56,7 @@ class MenuRepository:
 
     def update_menu(self,
                     menu: MenuIn,
-                    menu_id: UUID):
+                    menu_id: UUID) -> MenuOut:
         db_menu = self.get_menu(menu_id=menu_id)
         if db_menu is None:
             not_found(SAMPLE)
@@ -68,13 +70,13 @@ class MenuRepository:
         upd_menu.dishes_count = self.dish_count(menu_id=upd_menu.id)
         return upd_menu
 
-    def submenu_count(self, menu_id: UUID):
+    def submenu_count(self, menu_id: UUID) -> int:
         submenus = self.session.query(func.count()).select_from(Menu).join(
             Submenu, Menu.id == Submenu.parent_menu_id).filter(
             Menu.id == menu_id).scalar()
         return submenus
 
-    def dish_count(self, menu_id: UUID):
+    def dish_count(self, menu_id: UUID) -> int:
         dishes = self.session.query(func.count()).select_from(Menu).join(
             Submenu, Menu.id == Submenu.parent_menu_id).outerjoin(
             Dish, Submenu.id == Dish.parent_submenu_id).filter(

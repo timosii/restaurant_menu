@@ -1,10 +1,13 @@
-from ..schemas import DishIn
-from ..models import Dish
-from .errors import not_found, success_delete
 from uuid import UUID, uuid4
-from sqlalchemy.orm import Session
+
 from fastapi import Depends
+from fastapi.responses import JSONResponse
+from sqlalchemy.orm import Session
+
 from ..database import get_db
+from ..models import Dish
+from ..schemas import DishIn, DishOut
+from .errors import not_found, success_delete
 
 SAMPLE = 'dish'
 
@@ -14,14 +17,14 @@ class DishRepository:
         self.session = session
         self.model = Dish
 
-    def get_dishes(self, submenu_id: UUID):
+    def get_dishes(self, submenu_id: UUID) -> list[DishOut]:
         current_dishes = self.session.query(Dish).filter(
             Dish.parent_submenu_id == submenu_id).all()
         for dish in current_dishes:
             dish.price = str(dish.price)
         return current_dishes
 
-    def get_dish(self, dish_id: UUID):
+    def get_dish(self, dish_id: UUID) -> DishOut:
         current_dish = self.session.query(Dish).filter(
             Dish.id == dish_id).first()
         if current_dish is None:
@@ -31,7 +34,7 @@ class DishRepository:
 
     def create_dish(self,
                     submenu_id: UUID,
-                    dish: DishIn):
+                    dish: DishIn) -> DishOut:
         db_dish = Dish(id=uuid4(),
                        title=dish.title,
                        description=dish.description,
@@ -46,7 +49,7 @@ class DishRepository:
     def update_dish(self,
                     submenu_id: UUID,
                     dish_id: UUID,
-                    dish: DishIn):
+                    dish: DishIn) -> DishOut:
         db_dish = self.get_dish(dish_id=dish_id)
         if db_dish is None:
             not_found(SAMPLE)
@@ -62,9 +65,9 @@ class DishRepository:
         return dish_to_update
 
     def delete_dish(self,
-                    dish_id: UUID):
+                    dish_id: UUID) -> JSONResponse:
         dish_for_delete = self.session.query(Dish).filter(
-                Dish.id == dish_id).first()
+            Dish.id == dish_id).first()
         if dish_for_delete is None:
             not_found(SAMPLE)
         self.session.delete(dish_for_delete)

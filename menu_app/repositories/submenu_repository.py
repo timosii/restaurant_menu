@@ -1,12 +1,14 @@
-from ..schemas import SubmenuIn
-from ..models import Submenu, Dish
-from .errors import not_found, success_delete
 from uuid import UUID, uuid4
-from sqlalchemy.orm import Session
-from fastapi import Depends
-from ..database import get_db
-from sqlalchemy import func
 
+from fastapi import Depends
+from fastapi.responses import JSONResponse
+from sqlalchemy import func
+from sqlalchemy.orm import Session
+
+from ..database import get_db
+from ..models import Dish, Submenu
+from ..schemas import SubmenuIn, SubmenuOut
+from .errors import not_found, success_delete
 
 SAMPLE = 'submenu'
 
@@ -16,7 +18,7 @@ class SubmenuRepository:
         self.session = session
         self.model = Submenu
 
-    def get_submenus(self, menu_id: UUID):
+    def get_submenus(self, menu_id: UUID) -> list[SubmenuOut]:
         submenus = self.session.query(Submenu).filter(
             Submenu.parent_menu_id == menu_id).all()
         for submenu in submenus:
@@ -26,7 +28,7 @@ class SubmenuRepository:
 
     def create_submenu(self,
                        submenu: SubmenuIn,
-                       menu_id: UUID):
+                       menu_id: UUID) -> SubmenuOut:
         db_submenu = Submenu(id=uuid4(),
                              title=submenu.title,
                              description=submenu.description,
@@ -38,16 +40,16 @@ class SubmenuRepository:
             submenu_id=db_submenu.id)
         return db_submenu
 
-    def get_submenu(self, submenu_id: UUID):
+    def get_submenu(self, submenu_id: UUID) -> SubmenuOut:
         current_submenu = self.session.query(Submenu).filter(
             Submenu.id == submenu_id).first()
         if current_submenu is None:
             not_found(SAMPLE)
         current_submenu.dishes_count = self.dish_for_submenu_count(
-                submenu_id=current_submenu.id)
+            submenu_id=current_submenu.id)
         return current_submenu
 
-    def delete_submenu(self, submenu_id: UUID):
+    def delete_submenu(self, submenu_id: UUID) -> JSONResponse:
         submenu_for_delete = self.session.query(Submenu).filter(
             Submenu.id == submenu_id).first()
         if submenu_for_delete is None:
@@ -58,7 +60,7 @@ class SubmenuRepository:
 
     def update_submenu(self, menu_id: UUID,
                        submenu_id: UUID,
-                       submenu: SubmenuIn):
+                       submenu: SubmenuIn) -> SubmenuOut:
         db_submenu = self.get_submenu(submenu_id=submenu_id)
         if db_submenu is None:
             not_found(SAMPLE)
@@ -73,7 +75,7 @@ class SubmenuRepository:
             submenu_id=upd_submenu.id)
         return upd_submenu
 
-    def dish_for_submenu_count(self, submenu_id: UUID):
+    def dish_for_submenu_count(self, submenu_id: UUID) -> int:
         dishes = self.session.query(func.count()).select_from(
             Submenu).join(Dish, Submenu.id == Dish.parent_submenu_id).filter(
             Submenu.id == submenu_id).scalar()

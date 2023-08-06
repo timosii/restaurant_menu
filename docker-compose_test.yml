@@ -39,4 +39,3 @@ services:
 networks:
   menu_network_test:
     driver: bridge
-
