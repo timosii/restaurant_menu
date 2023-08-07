@@ -18,7 +18,7 @@ class DishService:
     def get_all(self, submenu_id: UUID) -> list[DishOut]:
         return self.database_repository.get_dishes(submenu_id=submenu_id)
 
-    def get_one(self,
+    def get_one(self, menu_id: UUID,
                 submenu_id: UUID,
                 dish_id: UUID) -> DishOut | None:
         if self.cache.check_cache(submenu_id=submenu_id, dish_id=dish_id):
@@ -26,28 +26,32 @@ class DishService:
                                          dish_id=dish_id)
         result = self.database_repository.get_dish(dish_id=dish_id)
         self.cache.save_cache(subject=result,
+                              menu_id=menu_id,
                               submenu_id=submenu_id,
                               dish_id=result.id)
         return result
 
-    def create(self,
+    def create(self, menu_id: UUID,
                submenu_id: UUID, dish: DishIn) -> DishOut:
         result = self.database_repository.create_dish(
             submenu_id=submenu_id, dish=dish)
         self.cache.save_cache(subject=result,
+                              menu_id=menu_id,
                               submenu_id=submenu_id,
                               dish_id=result.id)
         return result
 
-    def update(self,
+    def update(self, menu_id: UUID,
                submenu_id: UUID,
                dish_id: UUID, dish: DishIn) -> DishOut:
         result = self.database_repository.update_dish(
             submenu_id=submenu_id, dish_id=dish_id, dish=dish)
-        self.cache.save_cache(subject=result,
+        self.cache.save_cache(subject=result, menu_id=menu_id,
                               submenu_id=submenu_id, dish_id=dish_id)
         return result
 
-    def delete(self, submenu_id: UUID, dish_id: UUID) -> JSONResponse:
-        self.cache.delete_cache(submenu_id=submenu_id, dish_id=dish_id)
+    def delete(self, menu_id: UUID,
+               submenu_id: UUID, dish_id: UUID) -> JSONResponse:
+        self.cache.delete_cache(menu_id=menu_id,
+                                submenu_id=submenu_id, dish_id=dish_id)
         return self.database_repository.delete_dish(dish_id=dish_id)

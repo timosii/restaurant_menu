@@ -20,37 +20,45 @@ def reading_dishes(submenu_id: UUID,
 @router.get('/{dish_id}',
             response_model=DishOut,
             status_code=status.HTTP_200_OK)
-def reading_dish(submenu_id: UUID,
+def reading_dish(menu_id: UUID,
+                 submenu_id: UUID,
                  dish_id: UUID,
                  dish: DishService = Depends()) -> DishOut | None:
-    return dish.get_one(submenu_id=submenu_id,
+    return dish.get_one(menu_id=menu_id,
+                        submenu_id=submenu_id,
                         dish_id=dish_id)
 
 
 @router.post('/', response_model=DishOut,
              status_code=status.HTTP_201_CREATED)
-def creating_dish(submenu_id: UUID,
+def creating_dish(menu_id: UUID,
+                  submenu_id: UUID,
                   dish_data: DishIn,
                   dish: DishService = Depends()) -> DishOut:
-    return dish.create(submenu_id=submenu_id,
+    return dish.create(menu_id=menu_id,
+                       submenu_id=submenu_id,
                        dish=dish_data)
 
 
 @router.patch('/{dish_id}',
               response_model=DishOut,
               status_code=status.HTTP_200_OK)
-def updating_dish(submenu_id: UUID,
+def updating_dish(menu_id: UUID,
+                  submenu_id: UUID,
                   dish_id: UUID,
                   dish_data: DishIn,
                   dish: DishService = Depends()) -> DishOut:
-    return dish.update(submenu_id=submenu_id,
+    return dish.update(menu_id=menu_id,
+                       submenu_id=submenu_id,
                        dish_id=dish_id, dish=dish_data)
 
 
 @router.delete('/{dish_id}',
                response_model=DeleteMSG,
                status_code=status.HTTP_200_OK)
-def deleting_dish(submenu_id: UUID,
+def deleting_dish(menu_id: UUID,
+                  submenu_id: UUID,
                   dish_id: UUID,
                   dish: DishService = Depends()) -> DishOut:
-    return dish.delete(submenu_id=submenu_id, dish_id=dish_id)
+    return dish.delete(menu_id=menu_id,
+                       submenu_id=submenu_id, dish_id=dish_id)
