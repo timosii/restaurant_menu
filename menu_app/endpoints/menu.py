@@ -5,8 +5,11 @@ from fastapi.responses import JSONResponse
 
 from menu_app.services.menu_service import MenuService
 
+from .. import models
+from ..database import engine
 from ..schemas import DeleteMSG, MenuIn, MenuOut
 
+models.Base.metadata.create_all(bind=engine)
 router = APIRouter(prefix='/api/v1/menus')
 
 

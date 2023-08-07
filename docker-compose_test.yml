@@ -5,12 +5,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 123
-      POSTGRES_HOST: test_database
-      POSTGRES_PORT: 5432
-      POSTGRES_DB: test_db
+    volumes:
+      - .:/code
+    env_file: .env_test
     command: pytest -v
     ports:
       - "8001:8000"
@@ -20,17 +17,24 @@ services:
     networks:
       - menu_network_test
 
-
   test_database:
     image: postgres:15.1-alpine
-    # restart: always
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 123
-      POSTGRES_DB: test_db
+    restart: always
+    env_file: .env_test
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}" ]
       interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - menu_network_test
+
+  test_cache:
+    image: redis:latest
+    env_file: .env_test
+    healthcheck:
+      test: ["CMD", "redis-cli","ping"]
+      interval: 5s
       timeout: 5s
       retries: 5
     networks:

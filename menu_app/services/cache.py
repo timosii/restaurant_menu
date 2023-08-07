@@ -4,12 +4,19 @@ from uuid import UUID
 import redis
 from fastapi.encoders import jsonable_encoder
 
+from ..config import settings
 from ..schemas import DishOut, MenuOut, SubmenuOut
+
+host = settings.REDIS_HOST
+port = settings.REDIS_PORT
+db = settings.REDIS_DB
 
 
 class CacheBase:
-    def __init__(self, host='localhost', port=6379, db=0) -> None:
-        self.redis_conn = redis.Redis(host=host, port=port, db=db)
+    def __init__(self):
+        self.redis_conn = redis.Redis(host=host,
+                                      port=int(port),
+                                      db=int(db))
 
     def delete_parent_menu(self, menu_id: UUID) -> None:
         self.redis_conn.delete(f'menu:{menu_id}')

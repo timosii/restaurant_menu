@@ -10,6 +10,7 @@ def get_url():
     hostname = settings.POSTGRES_HOST
     port = settings.POSTGRES_PORT
     db = settings.POSTGRES_DB
+
     return f'postgresql://{user}:{password}@{hostname}:{port}/{db}'
 
 

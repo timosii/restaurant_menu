@@ -2,9 +2,7 @@ from sqlalchemy import Column, ForeignKey, Numeric, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
-from .database import Base, engine
-
-Base.metadata.create_all(bind=engine)
+from .database import Base
 
 
 class Menu(Base):
