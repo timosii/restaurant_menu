@@ -6,16 +6,6 @@ client = TestClient(app)
 
 prefix = '/api/v1/menus'
 
-created_menu = {
-    'title': 'My menu 1',
-    'description': 'My menu description 1'
-}
-
-updated_menu = {
-    'title': 'My updated menu 1',
-    'description': 'My updated menu description 1'
-}
-
 
 def test_reading_menus(cleanup_db):
     response = client.get(f'{prefix}/')
@@ -23,37 +13,37 @@ def test_reading_menus(cleanup_db):
     assert response.json() == []
 
 
-def test_create_menu():
-    response = client.post(f'{prefix}/', json=created_menu)
+def test_create_menu(get_menu):
+    response = client.post(f'{prefix}/', json=get_menu)
     assert response.status_code == 201
     result = response.json()
     global test_menu_id
     test_menu_id = result['id']
     assert isinstance(result['id'], str)
-    assert result['title'] == created_menu['title']
-    assert result['description'] == created_menu['description']
+    assert result['title'] == get_menu['title']
+    assert result['description'] == get_menu['description']
     assert isinstance(result['submenus_count'], int)
     assert isinstance(result['dishes_count'], int)
 
 
-def test_reading_menu():
+def test_reading_menu(get_menu):
     response = client.get(f'{prefix}/{test_menu_id}')
     assert response.status_code == 200
     result = response.json()
     assert isinstance(result['id'], str)
-    assert result['title'] == created_menu['title']
-    assert result['description'] == created_menu['description']
+    assert result['title'] == get_menu['title']
+    assert result['description'] == get_menu['description']
     assert isinstance(result['submenus_count'], int)
     assert isinstance(result['dishes_count'], int)
 
 
-def test_updating_menu():
-    response = client.patch(f'{prefix}/{test_menu_id}', json=updated_menu)
+def test_updating_menu(get_updated_menu):
+    response = client.patch(f'{prefix}/{test_menu_id}', json=get_updated_menu)
     assert response.status_code == 200
     result = response.json()
     assert isinstance(result['id'], str)
-    assert result['title'] == updated_menu['title']
-    assert result['description'] == updated_menu['description']
+    assert result['title'] == get_updated_menu['title']
+    assert result['description'] == get_updated_menu['description']
     assert isinstance(result['submenus_count'], int)
     assert isinstance(result['dishes_count'], int)
 

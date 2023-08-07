@@ -6,16 +6,6 @@ client = TestClient(app)
 
 prefix = '/api/v1/menus'
 
-created_submenu = {
-    'title': 'My submenu 1',
-    'description': 'My submenu description 1'
-}
-
-updated_submenu = {
-    'title': 'My updated submenu 1',
-    'description': 'My updated submenu description 1'
-}
-
 
 def test_reading_submenus(get_menuid_for_submenu_test):
     global test_menu_id
@@ -25,39 +15,39 @@ def test_reading_submenus(get_menuid_for_submenu_test):
     assert response.json() == []
 
 
-def test_create_submenu():
+def test_create_submenu(get_submenu):
     response = client.post(f'{prefix}/{test_menu_id}/submenus',
-                           json=created_submenu)
+                           json=get_submenu)
     assert response.status_code == 201
     result = response.json()
     global test_submenu_id
     test_submenu_id = result['id']
     assert isinstance(result['id'], str)
-    assert result['title'] == created_submenu['title']
-    assert result['description'] == created_submenu['description']
+    assert result['title'] == get_submenu['title']
+    assert result['description'] == get_submenu['description']
     assert isinstance(result['dishes_count'], int)
 
 
-def test_reading_submenu():
+def test_reading_submenu(get_submenu):
     response = client.get(f'{prefix}/{test_menu_id}/submenus/'
                           f'{test_submenu_id}')
     assert response.status_code == 200
     result = response.json()
     assert isinstance(result['id'], str)
-    assert result['title'] == created_submenu['title']
-    assert result['description'] == created_submenu['description']
+    assert result['title'] == get_submenu['title']
+    assert result['description'] == get_submenu['description']
     assert isinstance(result['dishes_count'], int)
 
 
-def test_updating_submenu():
+def test_updating_submenu(get_updated_submenu):
     response = client.patch(f'{prefix}/{test_menu_id}/submenus/'
                             f'{test_submenu_id}',
-                            json=updated_submenu)
+                            json=get_updated_submenu)
     assert response.status_code == 200
     result = response.json()
     assert isinstance(result['id'], str)
-    assert result['title'] == updated_submenu['title']
-    assert result['description'] == updated_submenu['description']
+    assert result['title'] == get_updated_submenu['title']
+    assert result['description'] == get_updated_submenu['description']
     assert isinstance(result['dishes_count'], int)
 
 

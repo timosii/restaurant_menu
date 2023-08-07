@@ -6,18 +6,6 @@ client = TestClient(app)
 
 prefix = '/api/v1/menus'
 
-created_dish = {
-    'title': 'My dish 1',
-    'description': 'My dish description 1',
-    'price': '12.50'
-}
-
-updated_dish = {
-    'title': 'My updated dish 1',
-    'description': 'My updated dish description 1',
-    'price': '14.50'
-}
-
 
 def test_reading_dishes(get_submenuid_for_dish_test):
     global test_menu_id, test_submenu_id
@@ -28,40 +16,40 @@ def test_reading_dishes(get_submenuid_for_dish_test):
     assert response.json() == []
 
 
-def test_create_dish():
+def test_create_dish(get_dish_1):
     response = client.post(f'{prefix}/{test_menu_id}/submenus/'
-                           f'{test_submenu_id}/dishes', json=created_dish)
+                           f'{test_submenu_id}/dishes', json=get_dish_1)
     assert response.status_code == 201
     result = response.json()
     global test_dish_id
     test_dish_id = result['id']
     assert isinstance(result['id'], str)
-    assert result['title'] == created_dish['title']
-    assert result['description'] == created_dish['description']
-    assert result['price'] == created_dish['price']
+    assert result['title'] == get_dish_1['title']
+    assert result['description'] == get_dish_1['description']
+    assert result['price'] == get_dish_1['price']
 
 
-def test_reading_dish():
+def test_reading_dish(get_dish_1):
     response = client.get(f'{prefix}/{test_menu_id}/submenus/'
                           f'{test_submenu_id}/dishes/{test_dish_id}')
     assert response.status_code == 200
     result = response.json()
     assert isinstance(result['id'], str)
-    assert result['title'] == created_dish['title']
-    assert result['description'] == created_dish['description']
-    assert result['price'] == created_dish['price']
+    assert result['title'] == get_dish_1['title']
+    assert result['description'] == get_dish_1['description']
+    assert result['price'] == get_dish_1['price']
 
 
-def test_updating_dish():
+def test_updating_dish(get_updated_dish):
     response = client.patch(f'{prefix}/{test_menu_id}/submenus/'
                             f'{test_submenu_id}/dishes/{test_dish_id}',
-                            json=updated_dish)
+                            json=get_updated_dish)
     assert response.status_code == 200
     result = response.json()
     assert isinstance(result['id'], str)
-    assert result['title'] == updated_dish['title']
-    assert result['description'] == updated_dish['description']
-    assert result['price'] == updated_dish['price']
+    assert result['title'] == get_updated_dish['title']
+    assert result['description'] == get_updated_dish['description']
+    assert result['price'] == get_updated_dish['price']
 
 
 def test_deleting_dish():
