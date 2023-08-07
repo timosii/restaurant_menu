@@ -14,6 +14,11 @@ router = APIRouter(prefix='/api/v1/menus/{menu_id}/submenus')
             status_code=status.HTTP_200_OK)
 def reading_submenus(menu_id: UUID,
                      submenu: SubmenuService = Depends()) -> list[SubmenuOut]:
+    '''
+    Функция принимает id меню, для которого отображает список подменю.
+    Возвращает список подменю в виде экземпляров модели SubmenuOut.
+    Если ни одного подменю не найдено, вернётся пустой список.
+    '''
     return submenu.get_all(menu_id=menu_id)
 
 
@@ -23,6 +28,12 @@ def reading_submenus(menu_id: UUID,
 def reading_submenu(menu_id: UUID,
                     submenu_id: UUID,
                     submenu: SubmenuService = Depends()) -> SubmenuOut | None:
+    '''
+    Получение подменю в виде экземпляра модели SubmenuOut.
+    Функция принимает id меню и id подменю, которое нужно найти.
+    Если подменю не найдено - будет возбуждено исключение: ошибка 404
+    "submenu not found"
+    '''
     return submenu.get_one(menu_id=menu_id, submenu_id=submenu_id)
 
 
@@ -31,6 +42,13 @@ def reading_submenu(menu_id: UUID,
 def creating_submenu(menu_id: UUID,
                      submenu_data: SubmenuIn,
                      submenu: SubmenuService = Depends()) -> SubmenuOut:
+    '''
+    Создание подменю. Функция принимает id меню, для которого
+    нужно создать подменю, и экземпляр модели SubmenuIn.
+    Возвращает экземпляр модели SubmenuOut.
+    Если подменю с таким названием уже присутствует в базе -
+    будет возбуждено исключение: ошибка 400 "submenu already exist"
+    '''
     return submenu.create(menu_id=menu_id, submenu=submenu_data)
 
 
@@ -41,6 +59,14 @@ def updating_submenu(menu_id: UUID,
                      submenu_id: UUID,
                      submenu_data: SubmenuIn,
                      submenu: SubmenuService = Depends()) -> SubmenuOut:
+    '''
+    Обновление подменю. Функция принимает id меню,
+    в котором находится подменю для обновления,
+    id подменю, которое нужно обновить и экземпляр модели SubmenuIn.
+    Возвращает экземпляр модели SubmenuOut.
+    Если подменю не найдено - будет возбуждено исключение: ошибка 404
+    "submenu not found"
+    '''
     return submenu.update(
         menu_id=menu_id, submenu_id=submenu_id, submenu=submenu_data)
 
@@ -51,4 +77,11 @@ def updating_submenu(menu_id: UUID,
 def deleting_submenu(menu_id: UUID,
                      submenu_id: UUID,
                      submenu: SubmenuService = Depends()) -> JSONResponse:
+    '''
+    Удаление подменю. Функция принимает id меню и id подменю,
+    которое нужно удалить. Возвращает ответ в формате JSON
+    с сообщением об успешном удалении.
+    Если подменю не найдено - будет возбуждено исключение: ошибка 404
+    "submenu not found"
+    '''
     return submenu.delete(menu_id=menu_id, submenu_id=submenu_id)

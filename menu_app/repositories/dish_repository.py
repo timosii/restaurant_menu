@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 from ..database import get_db
 from ..models import Dish
 from ..schemas import DishIn, DishOut
-from .errors import not_found, success_delete
+from .errors import already_exist, not_found, success_delete
 
 SAMPLE = 'dish'
 
@@ -24,17 +24,10 @@ class DishRepository:
             dish.price = str(dish.price)
         return current_dishes
 
-    def get_dish(self, dish_id: UUID) -> DishOut:
-        current_dish = self.session.query(Dish).filter(
-            Dish.id == dish_id).first()
-        if current_dish is None:
-            not_found(SAMPLE)
-        current_dish.price = str(current_dish.price)
-        return current_dish
-
     def create_dish(self,
                     submenu_id: UUID,
                     dish: DishIn) -> DishOut:
+        self.check_dish_by_title(dish_title=dish.title)
         db_dish = Dish(id=uuid4(),
                        title=dish.title,
                        description=dish.description,
@@ -45,6 +38,21 @@ class DishRepository:
         self.session.refresh(db_dish)
         db_dish.price = str(db_dish.price)
         return db_dish
+
+    def get_dish(self, dish_id: UUID) -> DishOut:
+        current_dish = self.session.query(Dish).filter(
+            Dish.id == dish_id).first()
+        if current_dish is None:
+            not_found(SAMPLE)
+        current_dish.price = str(current_dish.price)
+        return current_dish
+
+    def check_dish_by_title(self, dish_title: str) -> None:
+        db_menu = self.session.query(Dish).filter(
+            Dish.title == dish_title).first()
+        if db_menu:
+            already_exist(SAMPLE)
+        return
 
     def update_dish(self,
                     submenu_id: UUID,

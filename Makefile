@@ -4,6 +4,9 @@ install:
 connect:
 	poetry run uvicorn menu_app.main:app --reload
 
+check:
+	poetry run pre-commit run --all-files
+
 app:
 	docker-compose up -d
 

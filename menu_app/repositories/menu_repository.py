@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 from ..database import get_db
 from ..models import Dish, Menu, Submenu
 from ..schemas import MenuIn, MenuOut
-from .errors import not_found, success_delete
+from .errors import already_exist, not_found, success_delete
 
 SAMPLE = 'menu'
 
@@ -26,6 +26,7 @@ class MenuRepository:
         return menus
 
     def create_menu(self, menu: MenuIn) -> MenuOut:
+        self.check_menu_by_title(menu_title=menu.title)
         db_menu = Menu(id=uuid4(),
                        title=menu.title,
                        description=menu.description)
@@ -44,6 +45,13 @@ class MenuRepository:
         db_menu.submenus_count = self.submenu_count(menu_id=db_menu.id)
         db_menu.dishes_count = self.dish_count(menu_id=db_menu.id)
         return db_menu
+
+    def check_menu_by_title(self, menu_title: str) -> None:
+        db_menu = self.session.query(Menu).filter(
+            Menu.title == menu_title).first()
+        if db_menu:
+            already_exist(SAMPLE)
+        return
 
     def delete_menu(self, menu_id: UUID) -> JSONResponse:
         menu_for_delete = self.session.query(Menu).filter(
