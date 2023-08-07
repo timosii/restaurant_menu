@@ -32,6 +32,7 @@ class CacheMenu(CacheBase):
     def save_cache(self, subject: MenuOut, menu_id: UUID) -> None:
         cache_data = jsonable_encoder(subject)
         self.redis_conn.set(f'menu:{menu_id}', json.dumps(cache_data))
+        self.redis_conn.expire(f'menu:{menu_id}', 30)
 
     def load_cache(self, menu_id: UUID) -> MenuOut | None:
         cached_data = self.redis_conn.get(f'menu:{menu_id}')
@@ -54,6 +55,7 @@ class CacheSubmenu(CacheBase):
         cache_data = jsonable_encoder(subject)
         self.redis_conn.hset(str(menu_id), f'submenu:{submenu_id}',
                              json.dumps(cache_data))
+        self.redis_conn.expire(str(menu_id), 30)
 
     def load_cache(self, menu_id: UUID,
                    submenu_id: UUID) -> SubmenuOut | None:
@@ -82,6 +84,7 @@ class CacheDish(CacheBase):
         cache_data = jsonable_encoder(subject)
         self.redis_conn.hset(str(submenu_id), f'dish:{dish_id}',
                              json.dumps(cache_data))
+        self.redis_conn.expire(str(submenu_id), 30)
 
     def load_cache(self, submenu_id: UUID, dish_id: UUID) -> DishOut | None:
         cached_data = self.redis_conn.hget(str(submenu_id),
