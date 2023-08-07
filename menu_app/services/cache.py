@@ -14,9 +14,7 @@ db = settings.REDIS_DB
 
 class CacheBase:
     def __init__(self):
-        self.redis_conn = redis.Redis(host=host,
-                                      port=int(port),
-                                      db=int(db))
+        self.redis_conn = redis.Redis(host=host, port=port, db=db)
 
     def delete_parent_menu(self, menu_id: UUID) -> None:
         self.redis_conn.delete(f'menu:{menu_id}')

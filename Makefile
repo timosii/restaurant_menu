@@ -22,4 +22,4 @@ stop:
 	docker-compose -f docker-compose_test.yml down
 
 delete-images:
-	docker rmi restaurant_menu-app restaurant_menu-test_app
+	docker rmi restaurant_menu-app restaurant_menu-test_app redis
