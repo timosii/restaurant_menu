@@ -10,7 +10,7 @@ from ..schemas import DishOut, MenuOut, SubmenuOut
 host = settings.REDIS_HOST
 port = settings.REDIS_PORT
 db = settings.REDIS_DB
-EXPIRE = 3000
+EXPIRE = 30
 
 
 class CacheBase:
