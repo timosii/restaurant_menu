@@ -16,7 +16,11 @@ class SubmenuService:
         self.cache = CacheSubmenu()
 
     def get_all(self, menu_id: UUID) -> list[SubmenuOut]:
-        return self.database_repository.get_submenus(menu_id=menu_id)
+        if self.cache.check_stage(prefix=f'Submenus:{menu_id}'):
+            return self.cache.load_stage(prefix=f'Submenus:{menu_id}')
+        result = self.database_repository.get_submenus(menu_id=menu_id)
+        self.cache.save_stage(subject=result, prefix=f'Submenus:{menu_id}')
+        return result
 
     def get_one(self,
                 menu_id: UUID,
@@ -27,7 +31,7 @@ class SubmenuService:
         result = self.database_repository.get_submenu(
             submenu_id=submenu_id)
         self.cache.save_cache(
-            subject=result, menu_id=menu_id, submenu_id=result.id)
+            subject=result, menu_id=menu_id, submenu_id=submenu_id)
         return result
 
     def create(self,
@@ -35,6 +39,8 @@ class SubmenuService:
                menu_id: UUID) -> SubmenuOut:
         result = self.database_repository.create_submenu(
             submenu=submenu, menu_id=menu_id)
+        self.cache.del_all_stages(menu_id=menu_id)
+        self.cache.delete(menu_id=menu_id)
         self.cache.save_cache(
             subject=result, menu_id=menu_id, submenu_id=result.id)
         return result
@@ -45,6 +51,7 @@ class SubmenuService:
                submenu: SubmenuIn) -> SubmenuOut:
         result = self.database_repository.update_submenu(
             menu_id=menu_id, submenu_id=submenu_id, submenu=submenu)
+        self.cache.del_stage(prefix=f'Submenus:{menu_id}')
         self.cache.save_cache(
             subject=result, menu_id=menu_id, submenu_id=result.id)
         return result

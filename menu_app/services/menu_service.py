@@ -15,23 +15,29 @@ class MenuService:
         self.cache = CacheMenu()
 
     def get_all(self) -> list[MenuOut]:
-        return self.database_repository.get_menus()
+        if self.cache.check_stage(prefix='Menus'):
+            return self.cache.load_stage(prefix='Menus')
+        result = self.database_repository.get_menus()
+        self.cache.save_stage(subject=result, prefix='Menus')
+        return result
 
     def get_one(self, menu_id: UUID) -> MenuOut | None:
         if self.cache.check_cache(menu_id=menu_id):
             return self.cache.load_cache(menu_id=menu_id)
         result = self.database_repository.get_menu(menu_id=menu_id)
-        self.cache.save_cache(subject=result, menu_id=result.id)
+        self.cache.save_cache(subject=result, menu_id=menu_id)
         return result
 
     def create(self, menu: MenuIn) -> MenuOut:
         result = self.database_repository.create_menu(menu=menu)
+        self.cache.del_stage(prefix='Menus')
         self.cache.save_cache(subject=result, menu_id=result.id)
         return result
 
     def update(self, menu: MenuIn, menu_id: UUID) -> MenuOut:
         result = self.database_repository.update_menu(
             menu=menu, menu_id=menu_id)
+        self.cache.del_stage(prefix='Menus')
         self.cache.save_cache(subject=result, menu_id=result.id)
         return result
 

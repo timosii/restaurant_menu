@@ -15,26 +15,39 @@ class DishService:
         self.database_repository = database_repository
         self.cache = CacheDish()
 
-    def get_all(self, submenu_id: UUID) -> list[DishOut]:
-        return self.database_repository.get_dishes(submenu_id=submenu_id)
+    def get_all(self, menu_id: UUID,
+                submenu_id: UUID) -> list[DishOut]:
+        if self.cache.check_stage(prefix=f'Dishes:{submenu_id}:{menu_id}'):
+            return self.cache.load_stage(
+                prefix=f'Dishes:{submenu_id}:{menu_id}')
+        result = self.database_repository.get_dishes(submenu_id=submenu_id)
+        self.cache.save_stage(subject=result,
+                              prefix=f'Dishes:{submenu_id}:{menu_id}')
+        return result
 
     def get_one(self, menu_id: UUID,
                 submenu_id: UUID,
                 dish_id: UUID) -> DishOut | None:
-        if self.cache.check_cache(submenu_id=submenu_id, dish_id=dish_id):
-            return self.cache.load_cache(submenu_id=submenu_id,
+        if self.cache.check_cache(menu_id=menu_id,
+                                  submenu_id=submenu_id,
+                                  dish_id=dish_id):
+            return self.cache.load_cache(menu_id=menu_id,
+                                         submenu_id=submenu_id,
                                          dish_id=dish_id)
         result = self.database_repository.get_dish(dish_id=dish_id)
         self.cache.save_cache(subject=result,
                               menu_id=menu_id,
                               submenu_id=submenu_id,
-                              dish_id=result.id)
+                              dish_id=dish_id)
         return result
 
     def create(self, menu_id: UUID,
                submenu_id: UUID, dish: DishIn) -> DishOut:
         result = self.database_repository.create_dish(
             submenu_id=submenu_id, dish=dish)
+        self.cache.del_all_stages(menu_id=menu_id, submenu_id=submenu_id)
+        self.cache.delete(menu_id=menu_id)
+        self.cache.delete(menu_id=menu_id, submenu_id=submenu_id)
         self.cache.save_cache(subject=result,
                               menu_id=menu_id,
                               submenu_id=submenu_id,
@@ -46,6 +59,7 @@ class DishService:
                dish_id: UUID, dish: DishIn) -> DishOut:
         result = self.database_repository.update_dish(
             submenu_id=submenu_id, dish_id=dish_id, dish=dish)
+        self.cache.del_stage(prefix=f'Dishes:{submenu_id}:{menu_id}')
         self.cache.save_cache(subject=result, menu_id=menu_id,
                               submenu_id=submenu_id, dish_id=dish_id)
         return result

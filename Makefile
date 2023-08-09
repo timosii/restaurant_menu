@@ -1,6 +1,9 @@
 install:
 	poetry install --without dev
 
+pre-commit:
+	poetry run pre-commit run --all-files
+
 connect:
 	poetry run uvicorn menu_app.main:app --reload
 

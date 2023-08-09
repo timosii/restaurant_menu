@@ -12,14 +12,15 @@ router = APIRouter(prefix=prefix)
 
 @router.get('/', response_model=list[DishOut],
             status_code=status.HTTP_200_OK)
-def reading_dishes(submenu_id: UUID,
+def reading_dishes(menu_id: UUID,
+                   submenu_id: UUID,
                    dish: DishService = Depends()) -> list[DishOut]:
     '''
     Функция принимает id подменю, для которого отображает список блюд.
     Возвращает список блюд в виде экземпляров модели DishOut.
     Если ни одного блюда не найдено, вернётся пустой список.
     '''
-    return dish.get_all(submenu_id=submenu_id)
+    return dish.get_all(menu_id=menu_id, submenu_id=submenu_id)
 
 
 @router.get('/{dish_id}',
