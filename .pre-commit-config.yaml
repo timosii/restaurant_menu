@@ -49,4 +49,3 @@ repos:
     -   id: mypy
         exclude: 'migrations'
         additional_dependencies: [types-redis]
-        # args: [--strict, --ignore-missing-imports]
