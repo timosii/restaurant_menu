@@ -3,9 +3,9 @@ from uuid import UUID
 from fastapi import Depends
 from fastapi.responses import JSONResponse
 
+from menu_app.cache.cache_subjects import CacheSubmenu
 from menu_app.repositories.submenu_repository import SubmenuRepository
 from menu_app.schemas import SubmenuIn, SubmenuOut
-from menu_app.services.cache import CacheSubmenu
 
 
 class SubmenuService:
@@ -16,10 +16,10 @@ class SubmenuService:
         self.cache = CacheSubmenu()
 
     async def get_all(self, menu_id: UUID) -> list[SubmenuOut]:
-        if await self.cache.check_stage(prefix=f'Submenus:{menu_id}'):
-            return await self.cache.load_stage(prefix=f'Submenus:{menu_id}')
+        if await self.cache.check_list(prefix=f'Submenus:{menu_id}'):
+            return await self.cache.load_list(prefix=f'Submenus:{menu_id}')
         result = await self.database_repository.get_submenus(menu_id=menu_id)
-        await self.cache.save_stage(subject=result, prefix=f'Submenus:{menu_id}')
+        await self.cache.save_list(subject=result, prefix=f'Submenus:{menu_id}')
         return result
 
     async def get_one(self,
@@ -39,7 +39,7 @@ class SubmenuService:
                      menu_id: UUID) -> SubmenuOut:
         result = await self.database_repository.create_submenu(
             submenu=submenu, menu_id=menu_id)
-        await self.cache.del_all_stages(menu_id=menu_id)
+        await self.cache.del_all_lists(menu_id=menu_id)
         await self.cache.delete(menu_id=menu_id)
         await self.cache.save_cache(
             subject=result, menu_id=menu_id, submenu_id=result.id)
@@ -51,7 +51,7 @@ class SubmenuService:
                      submenu: SubmenuIn) -> SubmenuOut:
         result = await self.database_repository.update_submenu(
             menu_id=menu_id, submenu_id=submenu_id, submenu=submenu)
-        await self.cache.del_stage(prefix=f'Submenus:{menu_id}')
+        await self.cache.del_list(prefix=f'Submenus:{menu_id}')
         await self.cache.save_cache(
             subject=result, menu_id=menu_id, submenu_id=result.id)
         return result
