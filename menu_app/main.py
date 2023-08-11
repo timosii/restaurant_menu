@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from .endpoints import dish, menu, submenu
+from menu_app.endpoints import dish, menu, submenu
 
 app = FastAPI()
 

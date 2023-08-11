@@ -2,7 +2,7 @@ from sqlalchemy import Column, ForeignKey, Numeric, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
-from .database import Base
+from menu_app.database import Base
 
 
 class Menu(Base):
@@ -23,7 +23,7 @@ class Submenu(Base):
     id = Column(UUID(as_uuid=True), primary_key=True)
     title = Column(String, unique=True)
     description = Column(String)
-    parent_menu_id = Column(UUID, ForeignKey('menus.id'))
+    parent_menu_id = Column(UUID(as_uuid=True), ForeignKey('menus.id'))
 
     menu = relationship('Menu', back_populates='submenus')
     dishes = relationship('Dish',
@@ -38,7 +38,7 @@ class Dish(Base):
     title = Column(String, unique=True)
     description = Column(String)
     price = Column(Numeric(scale=2))
-    parent_submenu_id = Column(UUID, ForeignKey('submenus.id'))
+    parent_submenu_id = Column(UUID(as_uuid=True), ForeignKey('submenus.id'))
 
     submenu = relationship('Submenu',
                            back_populates='dishes')

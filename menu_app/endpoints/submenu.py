@@ -3,45 +3,44 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, status
 from fastapi.responses import JSONResponse
 
+from menu_app.schemas import DeleteMSG, SubmenuIn, SubmenuOut
 from menu_app.services.submenu_service import SubmenuService
-
-from ..schemas import DeleteMSG, SubmenuIn, SubmenuOut
 
 router = APIRouter(prefix='/api/v1/menus/{menu_id}/submenus')
 
 
 @router.get('/', response_model=list[SubmenuOut],
             status_code=status.HTTP_200_OK)
-def reading_submenus(menu_id: UUID,
-                     submenu: SubmenuService = Depends()) -> list[SubmenuOut]:
+async def reading_submenus(menu_id: UUID,
+                           submenu: SubmenuService = Depends()) -> list[SubmenuOut]:
     '''
     Функция принимает id меню, для которого отображает список подменю.
     Возвращает список подменю в виде экземпляров модели SubmenuOut.
     Если ни одного подменю не найдено, вернётся пустой список.
     '''
-    return submenu.get_all(menu_id=menu_id)
+    return await submenu.get_all(menu_id=menu_id)
 
 
 @router.get('/{submenu_id}',
             response_model=SubmenuOut,
             status_code=status.HTTP_200_OK)
-def reading_submenu(menu_id: UUID,
-                    submenu_id: UUID,
-                    submenu: SubmenuService = Depends()) -> SubmenuOut | None:
+async def reading_submenu(menu_id: UUID,
+                          submenu_id: UUID,
+                          submenu: SubmenuService = Depends()) -> SubmenuOut | None:
     '''
     Получение подменю в виде экземпляра модели SubmenuOut.
     Функция принимает id меню и id подменю, которое нужно найти.
     Если подменю не найдено - будет возбуждено исключение: ошибка 404
     "submenu not found"
     '''
-    return submenu.get_one(menu_id=menu_id, submenu_id=submenu_id)
+    return await submenu.get_one(menu_id=menu_id, submenu_id=submenu_id)
 
 
 @router.post('/', response_model=SubmenuOut,
              status_code=status.HTTP_201_CREATED)
-def creating_submenu(menu_id: UUID,
-                     submenu_data: SubmenuIn,
-                     submenu: SubmenuService = Depends()) -> SubmenuOut:
+async def creating_submenu(menu_id: UUID,
+                           submenu_data: SubmenuIn,
+                           submenu: SubmenuService = Depends()) -> SubmenuOut:
     '''
     Создание подменю. Функция принимает id меню, для которого
     нужно создать подменю, и экземпляр модели SubmenuIn.
@@ -49,16 +48,16 @@ def creating_submenu(menu_id: UUID,
     Если подменю с таким названием уже присутствует в базе -
     будет возбуждено исключение: ошибка 400 "submenu already exist"
     '''
-    return submenu.create(menu_id=menu_id, submenu=submenu_data)
+    return await submenu.create(menu_id=menu_id, submenu=submenu_data)
 
 
 @router.patch('/{submenu_id}',
               response_model=SubmenuOut,
               status_code=status.HTTP_200_OK)
-def updating_submenu(menu_id: UUID,
-                     submenu_id: UUID,
-                     submenu_data: SubmenuIn,
-                     submenu: SubmenuService = Depends()) -> SubmenuOut:
+async def updating_submenu(menu_id: UUID,
+                           submenu_id: UUID,
+                           submenu_data: SubmenuIn,
+                           submenu: SubmenuService = Depends()) -> SubmenuOut:
     '''
     Обновление подменю. Функция принимает id меню,
     в котором находится подменю для обновления,
@@ -67,16 +66,16 @@ def updating_submenu(menu_id: UUID,
     Если подменю не найдено - будет возбуждено исключение: ошибка 404
     "submenu not found"
     '''
-    return submenu.update(
+    return await submenu.update(
         menu_id=menu_id, submenu_id=submenu_id, submenu=submenu_data)
 
 
 @router.delete('/{submenu_id}',
                response_model=DeleteMSG,
                status_code=status.HTTP_200_OK)
-def deleting_submenu(menu_id: UUID,
-                     submenu_id: UUID,
-                     submenu: SubmenuService = Depends()) -> JSONResponse:
+async def deleting_submenu(menu_id: UUID,
+                           submenu_id: UUID,
+                           submenu: SubmenuService = Depends()) -> JSONResponse:
     '''
     Удаление подменю. Функция принимает id меню и id подменю,
     которое нужно удалить. Возвращает ответ в формате JSON
@@ -84,4 +83,4 @@ def deleting_submenu(menu_id: UUID,
     Если подменю не найдено - будет возбуждено исключение: ошибка 404
     "submenu not found"
     '''
-    return submenu.delete(menu_id=menu_id, submenu_id=submenu_id)
+    return await submenu.delete(menu_id=menu_id, submenu_id=submenu_id)
