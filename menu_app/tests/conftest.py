@@ -26,20 +26,13 @@ async def override_get_async_session() -> AsyncSession:
 app.dependency_overrides[get_db] = override_get_async_session
 
 
-@pytest.fixture(autouse=True, scope='session')
+@pytest.fixture(autouse=True, scope='module')
 async def prepare_database():
     async with engine_test.begin() as conn:
         await conn.run_sync(models.Base.metadata.create_all)
     yield
     async with engine_test.begin() as conn:
         await conn.run_sync(models.Base.metadata.drop_all)
-
-
-@pytest.fixture(scope='module')
-async def clean_database():
-    async with engine_test.begin() as conn:
-        await conn.run_sync(models.Base.metadata.drop_all)
-        await conn.run_sync(models.Base.metadata.create_all)
 
 
 @pytest.fixture(scope='session')

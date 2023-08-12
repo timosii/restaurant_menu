@@ -53,7 +53,7 @@ async def test_deleting_menu(ac: AsyncClient):
     assert result['message'] == 'The menu has been deleted'
 
 
-async def test_reading_missing_menu(ac: AsyncClient, clean_database):
+async def test_reading_missing_menu(ac: AsyncClient):
     response = await ac.get(f'{prefix}/{test_menu_id}')
     assert response.status_code == 404
     result = response.json()

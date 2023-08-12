@@ -45,9 +45,6 @@ class DishService:
                      submenu_id: UUID, dish: DishIn) -> DishOut:
         result = await self.database_repository.create_dish(
             submenu_id=submenu_id, dish=dish)
-        await self.cache.del_all_lists(menu_id=menu_id, submenu_id=submenu_id)
-        await self.cache.delete(menu_id=menu_id)
-        await self.cache.delete(menu_id=menu_id, submenu_id=submenu_id)
         await self.cache.save_cache(subject=result,
                                     menu_id=menu_id,
                                     submenu_id=submenu_id,
@@ -59,13 +56,10 @@ class DishService:
                      dish_id: UUID, dish: DishIn) -> DishOut:
         result = await self.database_repository.update_dish(
             submenu_id=submenu_id, dish_id=dish_id, dish=dish)
-        await self.cache.del_list(prefix=f'Dishes:{submenu_id}:{menu_id}')
         await self.cache.save_cache(subject=result, menu_id=menu_id,
                                     submenu_id=submenu_id, dish_id=dish_id)
         return result
 
     async def delete(self, menu_id: UUID,
                      submenu_id: UUID, dish_id: UUID) -> JSONResponse:
-        await self.cache.delete_cache(menu_id=menu_id,
-                                      submenu_id=submenu_id, dish_id=dish_id)
         return await self.database_repository.delete_dish(dish_id=dish_id)

@@ -30,17 +30,14 @@ class MenuService:
 
     async def create(self, menu: MenuIn) -> MenuOut:
         result = await self.database_repository.create_menu(menu=menu)
-        await self.cache.del_list(prefix='Menus')
         await self.cache.save_cache(subject=result, menu_id=result.id)
         return result
 
     async def update(self, menu: MenuIn, menu_id: UUID) -> MenuOut:
         result = await self.database_repository.update_menu(
             menu=menu, menu_id=menu_id)
-        await self.cache.del_list(prefix='Menus')
         await self.cache.save_cache(subject=result, menu_id=result.id)
         return result
 
     async def delete(self, menu_id: UUID) -> JSONResponse:
-        await self.cache.delete_cache(menu_id=menu_id)
         return await self.database_repository.delete_menu(menu_id=menu_id)

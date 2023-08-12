@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, BackgroundTasks, Depends, status
 from fastapi.responses import JSONResponse
 
 from menu_app.schemas import DeleteMSG, SubmenuIn, SubmenuOut
@@ -38,7 +38,8 @@ async def reading_submenu(menu_id: UUID,
 
 @router.post('/', response_model=SubmenuOut,
              status_code=status.HTTP_201_CREATED)
-async def creating_submenu(menu_id: UUID,
+async def creating_submenu(background_tasks: BackgroundTasks,
+                           menu_id: UUID,
                            submenu_data: SubmenuIn,
                            submenu: SubmenuService = Depends()) -> SubmenuOut:
     '''
@@ -48,13 +49,16 @@ async def creating_submenu(menu_id: UUID,
     Если подменю с таким названием уже присутствует в базе -
     будет возбуждено исключение: ошибка 400 "submenu already exist"
     '''
+    background_tasks.add_task(submenu.cache.create_invalidation,
+                              menu_id=menu_id)
     return await submenu.create(menu_id=menu_id, submenu=submenu_data)
 
 
 @router.patch('/{submenu_id}',
               response_model=SubmenuOut,
               status_code=status.HTTP_200_OK)
-async def updating_submenu(menu_id: UUID,
+async def updating_submenu(background_tasks: BackgroundTasks,
+                           menu_id: UUID,
                            submenu_id: UUID,
                            submenu_data: SubmenuIn,
                            submenu: SubmenuService = Depends()) -> SubmenuOut:
@@ -66,6 +70,8 @@ async def updating_submenu(menu_id: UUID,
     Если подменю не найдено - будет возбуждено исключение: ошибка 404
     "submenu not found"
     '''
+    background_tasks.add_task(submenu.cache.update_invalidation,
+                              menu_id=menu_id)
     return await submenu.update(
         menu_id=menu_id, submenu_id=submenu_id, submenu=submenu_data)
 
@@ -73,7 +79,8 @@ async def updating_submenu(menu_id: UUID,
 @router.delete('/{submenu_id}',
                response_model=DeleteMSG,
                status_code=status.HTTP_200_OK)
-async def deleting_submenu(menu_id: UUID,
+async def deleting_submenu(background_tasks: BackgroundTasks,
+                           menu_id: UUID,
                            submenu_id: UUID,
                            submenu: SubmenuService = Depends()) -> JSONResponse:
     '''
@@ -83,4 +90,6 @@ async def deleting_submenu(menu_id: UUID,
     Если подменю не найдено - будет возбуждено исключение: ошибка 404
     "submenu not found"
     '''
+    background_tasks.add_task(submenu.cache.delete_invalidation,
+                              menu_id=menu_id, submenu_id=submenu_id)
     return await submenu.delete(menu_id=menu_id, submenu_id=submenu_id)

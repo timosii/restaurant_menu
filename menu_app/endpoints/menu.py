@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, BackgroundTasks, Depends, status
 from fastapi.responses import JSONResponse
 
 from menu_app.schemas import DeleteMSG, MenuIn, MenuOut
@@ -34,7 +34,7 @@ async def reading_menu(menu_id: UUID,
 
 @router.post('/', response_model=MenuOut,
              status_code=status.HTTP_201_CREATED)
-async def creating_menu(menu_data: MenuIn,
+async def creating_menu(background_tasks: BackgroundTasks, menu_data: MenuIn,
                         menu: MenuService = Depends()) -> MenuOut:
     '''
     Создание меню. Функция принимает экземпляр модели MenuIn.
@@ -42,13 +42,15 @@ async def creating_menu(menu_data: MenuIn,
     Если меню с таким названием уже присутствует в базе -
     будет возбуждено исключение: ошибка 400 "menu already exist"
     '''
+    background_tasks.add_task(menu.cache.create_invalidation)
     return await menu.create(menu=menu_data)
 
 
 @router.patch('/{menu_id}',
               response_model=MenuOut,
               status_code=status.HTTP_200_OK)
-async def updating_menu(menu_data: MenuIn,
+async def updating_menu(background_tasks: BackgroundTasks,
+                        menu_data: MenuIn,
                         menu_id: UUID,
                         menu: MenuService = Depends()) -> MenuOut:
     '''
@@ -57,13 +59,15 @@ async def updating_menu(menu_data: MenuIn,
     Если меню не найдено - будет возбуждено исключение: ошибка 404
     "menu not found"
     '''
+    background_tasks.add_task(menu.cache.update_invalidation)
     return await menu.update(menu=menu_data, menu_id=menu_id)
 
 
 @router.delete('/{menu_id}',
                response_model=DeleteMSG,
                status_code=status.HTTP_200_OK)
-async def deleting_menu(menu_id: UUID,
+async def deleting_menu(background_tasks: BackgroundTasks,
+                        menu_id: UUID,
                         menu: MenuService = Depends()) -> JSONResponse:
     '''
     Удаление меню. Функция принимает id меню,
@@ -72,4 +76,5 @@ async def deleting_menu(menu_id: UUID,
     Если меню не найдено - будет возбуждено исключение: ошибка 404
     "menu not found"
     '''
+    background_tasks.add_task(menu.cache.delete_invalidation, menu_id=menu_id)
     return await menu.delete(menu_id=menu_id)

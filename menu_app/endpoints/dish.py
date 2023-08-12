@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, BackgroundTasks, Depends, status
 
 from menu_app.schemas import DeleteMSG, DishIn, DishOut
 from menu_app.services.dish_service import DishService
@@ -42,7 +42,8 @@ async def reading_dish(menu_id: UUID,
 
 @router.post('/', response_model=DishOut,
              status_code=status.HTTP_201_CREATED)
-async def creating_dish(menu_id: UUID,
+async def creating_dish(background_tasks: BackgroundTasks,
+                        menu_id: UUID,
                         submenu_id: UUID,
                         dish_data: DishIn,
                         dish: DishService = Depends()) -> DishOut:
@@ -53,6 +54,8 @@ async def creating_dish(menu_id: UUID,
     Если блюдо с таким названием уже присутствует в базе -
     будет возбуждено исключение: ошибка 400 "dish already exist"
     '''
+    background_tasks.add_task(dish.cache.create_invalidation,
+                              menu_id=menu_id, submenu_id=submenu_id)
     return await dish.create(menu_id=menu_id,
                              submenu_id=submenu_id,
                              dish=dish_data)
@@ -61,7 +64,8 @@ async def creating_dish(menu_id: UUID,
 @router.patch('/{dish_id}',
               response_model=DishOut,
               status_code=status.HTTP_200_OK)
-async def updating_dish(menu_id: UUID,
+async def updating_dish(background_tasks: BackgroundTasks,
+                        menu_id: UUID,
                         submenu_id: UUID,
                         dish_id: UUID,
                         dish_data: DishIn,
@@ -73,6 +77,8 @@ async def updating_dish(menu_id: UUID,
     Если блюдо не найдено - будет возбуждено исключение: ошибка 404
     "dish not found"
     '''
+    background_tasks.add_task(dish.cache.update_invalidation,
+                              menu_id=menu_id, submenu_id=submenu_id)
     return await dish.update(menu_id=menu_id,
                              submenu_id=submenu_id,
                              dish_id=dish_id, dish=dish_data)
@@ -81,7 +87,8 @@ async def updating_dish(menu_id: UUID,
 @router.delete('/{dish_id}',
                response_model=DeleteMSG,
                status_code=status.HTTP_200_OK)
-async def deleting_dish(menu_id: UUID,
+async def deleting_dish(background_tasks: BackgroundTasks,
+                        menu_id: UUID,
                         submenu_id: UUID,
                         dish_id: UUID,
                         dish: DishService = Depends()) -> DishOut:
@@ -92,5 +99,7 @@ async def deleting_dish(menu_id: UUID,
     Если блюдо не найдено - будет возбуждено исключение: ошибка 404
     "dish not found"
     '''
+    background_tasks.add_task(dish.cache.delete_invalidation,
+                              menu_id=menu_id, submenu_id=submenu_id, dish_id=dish_id)
     return await dish.delete(menu_id=menu_id,
                              submenu_id=submenu_id, dish_id=dish_id)

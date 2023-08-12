@@ -39,8 +39,6 @@ class SubmenuService:
                      menu_id: UUID) -> SubmenuOut:
         result = await self.database_repository.create_submenu(
             submenu=submenu, menu_id=menu_id)
-        await self.cache.del_all_lists(menu_id=menu_id)
-        await self.cache.delete(menu_id=menu_id)
         await self.cache.save_cache(
             subject=result, menu_id=menu_id, submenu_id=result.id)
         return result
@@ -51,11 +49,9 @@ class SubmenuService:
                      submenu: SubmenuIn) -> SubmenuOut:
         result = await self.database_repository.update_submenu(
             menu_id=menu_id, submenu_id=submenu_id, submenu=submenu)
-        await self.cache.del_list(prefix=f'Submenus:{menu_id}')
         await self.cache.save_cache(
             subject=result, menu_id=menu_id, submenu_id=result.id)
         return result
 
     async def delete(self, menu_id: UUID, submenu_id: UUID) -> JSONResponse:
-        await self.cache.delete_cache(menu_id=menu_id, submenu_id=submenu_id)
         return await self.database_repository.delete_submenu(submenu_id=submenu_id)

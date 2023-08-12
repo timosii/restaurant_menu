@@ -58,7 +58,7 @@ async def test_deleting_dish(ac: AsyncClient):
     assert result['message'] == 'The dish has been deleted'
 
 
-async def test_reading_missing_dish(ac: AsyncClient, clean_database):
+async def test_reading_missing_dish(ac: AsyncClient):
     response = await ac.get(f'{prefix}/{test_menu_id}/submenus/'
                             f'{test_submenu_id}/dishes/{test_dish_id}')
     assert response.status_code == 404
