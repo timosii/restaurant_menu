@@ -10,7 +10,6 @@ from menu_app.schemas import DishOut, MenuOut, SubmenuOut
 
 
 class CacheMenu(CacheBase, CacheMenuInvalidation):
-
     async def save_cache(self, subject: MenuOut,
                          menu_id: UUID) -> None:
         await self.save(subject=subject, menu_id=menu_id)
@@ -23,7 +22,6 @@ class CacheMenu(CacheBase, CacheMenuInvalidation):
 
 
 class CacheSubmenu(CacheBase, CacheSubmenuInvalidation):
-
     async def save_cache(self, subject: SubmenuOut,
                          menu_id: UUID, submenu_id: UUID) -> None:
         await self.save(subject=subject, menu_id=menu_id, submenu_id=submenu_id)
@@ -40,7 +38,6 @@ class CacheSubmenu(CacheBase, CacheSubmenuInvalidation):
 
 
 class CacheDish(CacheBase, CacheDishInvalidation):
-
     async def save_cache(self, subject: DishOut,
                          menu_id: UUID,
                          submenu_id: UUID,

@@ -40,3 +40,11 @@ class DishOut(BaseItemOut):
 class DeleteMSG(BaseModel):
     status: bool
     message: str
+
+
+class SubmenuAllOut(BaseItemOut):
+    dishes: list[DishOut]
+
+
+class MenuAllOut(BaseItemOut):
+    submenus: list[SubmenuAllOut]

@@ -4,9 +4,9 @@ from httpx import AsyncClient
 prefix = '/api/v1/menus'
 
 
-async def test_reading_dishes(ac: AsyncClient, get_submenuid_for_dish_test):
+async def test_reading_dishes(ac: AsyncClient, get_submenuid):
     global test_menu_id, test_submenu_id
-    test_menu_id, test_submenu_id = get_submenuid_for_dish_test
+    test_menu_id, test_submenu_id = get_submenuid
     response = await ac.get(f'{prefix}/{test_menu_id}/submenus/'
                             f'{test_submenu_id}/dishes/')
     assert response.status_code == 200

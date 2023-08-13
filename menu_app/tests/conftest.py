@@ -85,6 +85,29 @@ dish_2 = {
     'price': '13.50'
 }
 
+viewall = [
+    {
+        'id': '155978aa-8517-4eeb-9a3a-cb245c403970',
+        'title': 'My menu 1',
+        'description': 'My menu description 1',
+        'submenus': [
+            {
+                'id': 'b0305dd7-04db-4bf7-adb6-a2fc217181be',
+                'title': 'My submenu 1',
+                'description': 'My submenu description 1',
+                'dishes': [
+                    {
+                        'id': '3116d4ec-5aba-4649-8ff2-d71af25f7520',
+                        'title': 'My dish 1',
+                        'description': 'My dish description 1',
+                        'price': '12.50'
+                    }
+                ]
+            }
+        ]
+    }
+]
+
 
 @pytest.fixture
 async def get_menu():
@@ -122,6 +145,11 @@ async def get_updated_dish():
 
 
 @pytest.fixture
+async def get_viewall():
+    return viewall
+
+
+@pytest.fixture
 async def get_menuid_for_submenu_test(ac: AsyncClient, get_submenu):
     response = await ac.post('/api/v1/menus/',
                              json=get_submenu)
@@ -131,7 +159,7 @@ async def get_menuid_for_submenu_test(ac: AsyncClient, get_submenu):
 
 
 @pytest.fixture
-async def get_menuid_for_dish_test(ac: AsyncClient, get_menu):
+async def get_menuid(ac: AsyncClient, get_menu):
     response = await ac.post('/api/v1/menus/',
                              json=get_menu)
     result = response.json()
@@ -140,10 +168,34 @@ async def get_menuid_for_dish_test(ac: AsyncClient, get_menu):
 
 
 @pytest.fixture
-async def get_submenuid_for_dish_test(ac: AsyncClient, get_menuid_for_dish_test, get_submenu):
-    test_menu_id = get_menuid_for_dish_test
+async def get_submenuid(ac: AsyncClient, get_menuid, get_submenu):
+    test_menu_id = get_menuid
     response = await ac.post(f'/api/v1/menus/{test_menu_id}/submenus/',
                              json=get_submenu)
     result = response.json()
     test_submenu_id = result['id']
     return test_menu_id, test_submenu_id
+
+
+@pytest.fixture
+async def get_data_for_viewall_test(ac: AsyncClient, get_submenuid, get_dish_1):
+    test_menu_id, test_submenu_id = get_submenuid
+    response = await ac.post(f'/api/v1/menus/{test_menu_id}/submenus/{test_submenu_id}/dishes/',
+                             json=get_dish_1)
+    result = response.json()
+    test_dish_id = result['id']
+    return test_menu_id, test_submenu_id, test_dish_id
+
+
+@pytest.fixture
+async def get_expected_viewall(get_data_for_viewall_test, get_viewall):
+    test_menu_id, test_submenu_id, test_dish_id = get_data_for_viewall_test
+    expected_result = get_viewall
+    for menu in expected_result:
+        menu['id'] = test_menu_id
+        for submenu in menu['submenus']:
+            submenu['id'] = test_submenu_id
+            for dish in submenu['dishes']:
+                dish['id'] = test_dish_id
+
+    return expected_result

@@ -104,7 +104,7 @@ class MenuRepository:
 
     async def dish_count(self, menu_id: UUID) -> int:
         stmt = select(func.count()).select_from(Menu).join(
-            Submenu, Menu.id == Submenu.parent_menu_id).outerjoin(
+            Submenu, Menu.id == Submenu.parent_menu_id).join(
             Dish, Submenu.id == Dish.parent_submenu_id).where(
             Menu.id == menu_id)
         result = await self.session.execute(stmt)
