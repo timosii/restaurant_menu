@@ -1,3 +1,4 @@
+# mypy: disable-error-code="arg-type"
 from uuid import UUID, uuid4
 
 from fastapi import Depends
@@ -17,7 +18,6 @@ SAMPLE = 'menu'
 class MenuRepository:
     def __init__(self, session: AsyncSession = Depends(get_db)) -> None:
         self.session = session
-        self.model = Menu
 
     async def get_menus(self) -> list[MenuOut]:
         stmt = select(Menu)
@@ -31,8 +31,9 @@ class MenuRepository:
         return menus
 
     async def create_menu(self, menu: MenuIn) -> MenuOut:
+        await self.check_menu_by_id(menu_id=menu.id)
         await self.check_menu_by_title(menu_title=menu.title)
-        db_menu = Menu(id=uuid4(),
+        db_menu = Menu(id=menu.id if menu.id else uuid4(),
                        title=menu.title,
                        description=menu.description)
         self.session.add(db_menu)
@@ -59,6 +60,14 @@ class MenuRepository:
         stmt = select(Menu).where(Menu.title == menu_title)
         result = await self.session.execute(stmt)
         db_menu = result.scalars().first()
+        if db_menu:
+            already_exist(SAMPLE)
+        return
+
+    async def check_menu_by_id(self, menu_id: UUID) -> None:
+        stmt = select(Menu).where(Menu.id == menu_id)
+        result = await self.session.execute(stmt)
+        db_menu = result.scalars().first()
 
         if db_menu:
             already_exist(SAMPLE)
@@ -77,7 +86,6 @@ class MenuRepository:
         return success_delete(SAMPLE)
 
     async def update_menu(self, menu: MenuIn, menu_id: UUID) -> MenuOut:
-        await self.check_menu_by_title(menu_title=menu.title)
         stmt = select(Menu).where(Menu.id == menu_id)
         result = await self.session.execute(stmt)
         db_menu = result.scalars().first()

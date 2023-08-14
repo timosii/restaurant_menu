@@ -1,3 +1,4 @@
+# mypy: disable-error-code="arg-type"
 from uuid import UUID, uuid4
 
 from fastapi import Depends
@@ -17,7 +18,6 @@ SAMPLE = 'submenu'
 class SubmenuRepository:
     def __init__(self, session: AsyncSession = Depends(get_db)) -> None:
         self.session = session
-        self.model = Submenu
 
     async def get_submenus(self, menu_id: UUID) -> list[SubmenuOut]:
         stmt = select(Submenu).where(Submenu.parent_menu_id == menu_id)
@@ -33,8 +33,9 @@ class SubmenuRepository:
     async def create_submenu(self,
                              submenu: SubmenuIn,
                              menu_id: UUID) -> SubmenuOut:
+        await self.check_submenu_by_id(submenu_id=submenu.id)
         await self.check_submenu_by_title(submenu_title=submenu.title)
-        db_submenu = Submenu(id=uuid4(),
+        db_submenu = Submenu(id=submenu.id if submenu.id else uuid4(),
                              title=submenu.title,
                              description=submenu.description,
                              parent_menu_id=menu_id)
@@ -65,6 +66,16 @@ class SubmenuRepository:
 
         if db_menu:
             already_exist(SAMPLE)
+        return
+
+    async def check_submenu_by_id(self, submenu_id: UUID) -> None:
+        stmt = select(Submenu).where(Submenu.id == submenu_id)
+        result = await self.session.execute(stmt)
+        db_menu = result.scalars().first()
+
+        if db_menu:
+            already_exist(SAMPLE)
+        return
 
     async def delete_submenu(self, submenu_id: UUID) -> JSONResponse:
         stmt = select(Submenu).where(Submenu.id == submenu_id)
@@ -81,7 +92,6 @@ class SubmenuRepository:
     async def update_submenu(self, menu_id: UUID,
                              submenu_id: UUID,
                              submenu: SubmenuIn) -> SubmenuOut:
-        await self.check_submenu_by_title(submenu_title=submenu.title)
         stmt = select(Submenu).where(
             Submenu.id == submenu_id,
             Submenu.parent_menu_id == menu_id)

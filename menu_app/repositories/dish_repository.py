@@ -1,3 +1,4 @@
+# mypy: disable-error-code="arg-type"
 from uuid import UUID, uuid4
 
 from fastapi import Depends
@@ -16,7 +17,6 @@ SAMPLE = 'dish'
 class DishRepository:
     def __init__(self, session: AsyncSession = Depends(get_db)) -> None:
         self.session = session
-        self.model = Dish
 
     async def get_dishes(self, submenu_id: UUID) -> list[DishOut]:
         stmt = select(Dish).where(Dish.parent_submenu_id == submenu_id)
@@ -31,8 +31,9 @@ class DishRepository:
     async def create_dish(self,
                           submenu_id: UUID,
                           dish: DishIn) -> DishOut:
+        await self.check_dish_by_id(dish_id=dish.id)
         await self.check_dish_by_title(dish_title=dish.title)
-        db_dish = Dish(id=uuid4(),
+        db_dish = Dish(id=dish.id if dish.id else uuid4(),
                        title=dish.title,
                        description=dish.description,
                        price=dish.price,
@@ -61,12 +62,21 @@ class DishRepository:
 
         if db_menu:
             already_exist(SAMPLE)
+        return
+
+    async def check_dish_by_id(self, dish_id: UUID) -> None:
+        stmt = select(Dish).where(Dish.id == dish_id)
+        result = await self.session.execute(stmt)
+        db_menu = result.scalars().first()
+
+        if db_menu:
+            already_exist(SAMPLE)
+        return
 
     async def update_dish(self,
                           submenu_id: UUID,
                           dish_id: UUID,
                           dish: DishIn) -> DishOut:
-        await self.check_dish_by_title(dish_title=dish.title)
         stmt = select(Dish).where(
             Dish.id == dish_id,
             Dish.parent_submenu_id == submenu_id)

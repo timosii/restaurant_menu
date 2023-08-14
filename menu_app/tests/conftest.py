@@ -87,17 +87,17 @@ dish_2 = {
 
 viewall = [
     {
-        'id': '155978aa-8517-4eeb-9a3a-cb245c403970',
+        'id': '',
         'title': 'My menu 1',
         'description': 'My menu description 1',
         'submenus': [
             {
-                'id': 'b0305dd7-04db-4bf7-adb6-a2fc217181be',
+                'id': '',
                 'title': 'My submenu 1',
                 'description': 'My submenu description 1',
                 'dishes': [
                     {
-                        'id': '3116d4ec-5aba-4649-8ff2-d71af25f7520',
+                        'id': '',
                         'title': 'My dish 1',
                         'description': 'My dish description 1',
                         'price': '12.50'

@@ -2,6 +2,7 @@ from pydantic import UUID4, BaseModel
 
 
 class BaseItemIn(BaseModel):
+    id: UUID4 | None = None
     title: str
     description: str
 
