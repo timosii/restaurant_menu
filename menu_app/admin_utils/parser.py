@@ -2,7 +2,7 @@ import openpyxl
 
 
 def parse_menu():
-    book = openpyxl.open('admin/Menu.xlsx', read_only=True, data_only=True)
+    book = openpyxl.open('Menu.xlsx', read_only=True, data_only=True)
     sheet = book.active
     rows = []
 

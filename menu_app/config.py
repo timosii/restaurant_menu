@@ -14,6 +14,9 @@ class Settings:
     REDIS_PORT = os.getenv('REDIS_PORT')
     REDIS_HOST = os.getenv('REDIS_HOST')
     REDIS_DB = os.getenv('REDIS_DB')
+    RABBITMQ_DEFAULT_USER = os.getenv('RABBITMQ_DEFAULT_USER')
+    RABBITMQ_DEFAULT_PASS = os.getenv('RABBITMQ_DEFAULT_PASS')
+    RABBITMQ_DEFAULT_HOST = os.getenv('RABBITMQ_DEFAULT_HOST')
 
 
 settings = Settings()

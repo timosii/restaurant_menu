@@ -1,0 +1,70 @@
+version: "3"
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/code
+    env_file: .env
+    ports:
+      - "8000:8000"
+    command: bash -c "alembic upgrade head && uvicorn menu_app.main:app --host 0.0.0.0 --port 8000 --reload"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - menu_network
+
+  db:
+    image: postgres:15.1-alpine
+    env_file: .env
+    ports:
+      - "5433:5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - menu_network
+
+  cache:
+    image: redis:latest
+    env_file: .env
+    ports:
+      - "6380:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli","ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - menu_network
+
+  rabbit:
+    image: rabbitmq:latest
+    restart: always
+    container_name: rabbit
+    env_file: .env
+    ports:
+      - "5672:5672"
+    networks:
+      - menu_network
+
+  celery:
+    build:
+      context: .
+    env_file: .env
+    command: bash -c "celery -A menu_app.tasks.tasks:celery worker -B --loglevel=INFO"
+    volumes:
+      - /code/admin
+    networks:
+      - menu_network
+    depends_on:
+      db:
+        condition: service_healthy
+
+networks:
+  menu_network:
+    driver: bridge
