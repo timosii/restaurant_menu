@@ -21,7 +21,6 @@ sync-start:
 
 start-all:
 	docker-compose up -d
-	docker-compose -f docker-compose_sync.yml up
 	docker-compose -f docker-compose_test.yml up
 
 stop:
