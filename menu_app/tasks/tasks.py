@@ -1,21 +1,12 @@
 import asyncio
 
-from celery import Celery
-
 from menu_app.admin_utils.parser import form_chunks
 from menu_app.admin_utils.send_data import (
     send_dish_data,
     send_menu_data,
     send_submenu_data,
 )
-from menu_app.config import settings
-
-user = settings.RABBITMQ_DEFAULT_USER
-password = settings.RABBITMQ_DEFAULT_PASS
-host = settings.RABBITMQ_DEFAULT_HOST
-
-
-celery = Celery('tasks', broker=f'amqp://{user}:{password}@{host}:5672')
+from menu_app.tasks.config_celery import celery
 
 
 async def start_sync():
@@ -43,7 +34,3 @@ celery.conf.beat_schedule = {
         'schedule': 15.0,
     },
 }
-
-
-if __name__ == '__main__':
-    sync_data()

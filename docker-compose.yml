@@ -4,14 +4,14 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    volumes:
-      - .:/code
     env_file: .env
     ports:
       - "8000:8000"
     command: bash -c "alembic upgrade head && uvicorn menu_app.main:app --host 0.0.0.0 --port 8000 --reload"
     depends_on:
       db:
+        condition: service_healthy
+      cache:
         condition: service_healthy
     networks:
       - menu_network
