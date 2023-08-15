@@ -6,7 +6,7 @@ from menu_app.admin_utils.send_data import (
     send_menu_data,
     send_submenu_data,
 )
-from menu_app.tasks.config_celery import celery
+from menu_app.tasks.config_celery import celery, delay
 
 
 async def start_sync():
@@ -31,6 +31,6 @@ def sync_data():
 celery.conf.beat_schedule = {
     'sync': {
         'task': 'menu_app.tasks.tasks.sync_data',
-        'schedule': 15.0,
+        'schedule': delay,
     },
 }

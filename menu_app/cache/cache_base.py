@@ -10,7 +10,7 @@ host = settings.REDIS_HOST
 port = settings.REDIS_PORT
 db = settings.REDIS_DB
 redis_url = f'redis://{host}:{port}'
-EXPIRE = 30
+EXPIRE = settings.CACHE_EXPIRE
 
 
 class CacheUtils:

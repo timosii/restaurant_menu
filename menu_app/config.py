@@ -1,3 +1,4 @@
+# mypy: disable-error-code="arg-type"
 import os
 
 from dotenv import load_dotenv
@@ -18,6 +19,8 @@ class Settings:
     RABBITMQ_DEFAULT_PASS = os.getenv('RABBITMQ_DEFAULT_PASS')
     RABBITMQ_DEFAULT_HOST = os.getenv('RABBITMQ_DEFAULT_HOST')
     RABBITMQ_DEFAULT_PORT = os.getenv('RABBITMQ_DEFAULT_PORT')
+    CACHE_EXPIRE = int(os.getenv('CACHE_EXPIRE'))
+    TIME_CELERY_DELAY = int(os.getenv('TIME_CELERY_DELAY'))
 
 
 settings = Settings()
