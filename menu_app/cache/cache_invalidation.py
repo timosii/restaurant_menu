@@ -12,7 +12,7 @@ class CacheInvalidation(CacheUtils):
         menu_id = kwargs.get('menu_id', None)
         submenu_id = kwargs.get('submenu_id', None)
         async with await self.get_redis_conn() as conn:
-            await conn.delete('Menus', f'Submenus:{menu_id}', f'Dishes:{submenu_id}:{menu_id}')
+            await conn.delete('ViewAll', 'Menus', f'Submenus:{menu_id}', f'Dishes:{submenu_id}:{menu_id}')
 
     async def del_child(self, parent_id: UUID) -> None:
         async with await self.get_redis_conn() as conn:
@@ -30,9 +30,11 @@ class CacheInvalidation(CacheUtils):
 class CacheMenuInvalidation(CacheInvalidation):
     async def create_invalidation(self):
         await self.del_list(prefix='Menus')
+        await self.del_list(prefix='ViewAll')
 
     async def update_invalidation(self):
         await self.del_list(prefix='Menus')
+        await self.del_list(prefix='ViewAll')
 
     async def delete_invalidation(self, menu_id: UUID):
         await self.del_all_lists(menu_id=menu_id)
@@ -47,6 +49,7 @@ class CacheSubmenuInvalidation(CacheInvalidation):
 
     async def update_invalidation(self, menu_id: UUID):
         await self.del_list(prefix=f'Submenus:{menu_id}')
+        await self.del_list(prefix='ViewAll')
 
     async def delete_invalidation(self, menu_id: UUID, submenu_id: UUID):
         await self.del_all_lists(menu_id=menu_id, submenu_id=submenu_id)
@@ -63,6 +66,7 @@ class CacheDishInvalidation(CacheInvalidation):
 
     async def update_invalidation(self, menu_id: UUID, submenu_id: UUID):
         await self.del_list(prefix=f'Dishes:{submenu_id}:{menu_id}')
+        await self.del_list(prefix='ViewAll')
 
     async def delete_invalidation(self, menu_id: UUID, submenu_id: UUID, dish_id: UUID):
         await self.del_all_lists(menu_id=menu_id, submenu_id=submenu_id)

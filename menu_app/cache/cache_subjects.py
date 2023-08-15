@@ -9,6 +9,10 @@ from menu_app.cache.cache_invalidation import (
 from menu_app.schemas import DishOut, MenuOut, SubmenuOut
 
 
+class CacheViewAll(CacheBase):
+    pass
+
+
 class CacheMenu(CacheBase, CacheMenuInvalidation):
     async def save_cache(self, subject: MenuOut,
                          menu_id: UUID) -> None:

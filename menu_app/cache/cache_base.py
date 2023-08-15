@@ -4,7 +4,7 @@ import aioredis
 from fastapi.encoders import jsonable_encoder
 
 from menu_app.config import settings
-from menu_app.schemas import DishOut, MenuOut, SubmenuOut
+from menu_app.schemas import DishOut, MenuAllOut, MenuOut, SubmenuOut
 
 host = settings.REDIS_HOST
 port = settings.REDIS_PORT
@@ -26,14 +26,16 @@ class CacheUtils:
 
 
 class CacheBase(CacheUtils):
-    async def save_list(self, subject: list, prefix: str) -> None:
+    async def save_list(self,
+                        subject: list[MenuOut] | list[SubmenuOut] | list[DishOut] | MenuAllOut,
+                        prefix: str) -> None:
         cache_data = jsonable_encoder(subject)
         async with await self.get_redis_conn() as conn:
             await conn.set(prefix, json.dumps(cache_data))
             await conn.expire(f'{prefix}', EXPIRE)
 
-    async def load_list(self, prefix:
-                        str) -> list[MenuOut] | list[SubmenuOut] | list[DishOut]:
+    async def load_list(self,
+                        prefix: str) -> list[MenuOut] | list[SubmenuOut] | list[DishOut] | MenuAllOut:
         async with await self.get_redis_conn() as conn:
             cached_data = await conn.get(prefix)
             return json.loads(cached_data)

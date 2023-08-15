@@ -7,5 +7,4 @@ password = settings.RABBITMQ_DEFAULT_PASS
 host = settings.RABBITMQ_DEFAULT_HOST
 port = settings.RABBITMQ_DEFAULT_PORT
 
-
 celery = Celery('tasks', broker=f'amqp://{user}:{password}@{host}:{port}')
