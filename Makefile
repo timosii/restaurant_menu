@@ -7,9 +7,6 @@ pre-commit:
 connect:
 	poetry run uvicorn menu_app.main:app --reload
 
-check:
-	poetry run pre-commit run --all-files
-
 app:
 	docker-compose up -d
 
@@ -30,4 +27,4 @@ stop:
 
 
 delete-images:
-	docker rmi restaurant_menu-app restaurant_menu-test_app redis rabbitmq restaurant_menu-celery
+	docker rmi restaurant_menu-app restaurant_menu-test_app redis rabbitmq:3-management restaurant_menu-celery
