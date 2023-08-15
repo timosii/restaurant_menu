@@ -4,15 +4,20 @@
 Проект на FastAPI с использованием PostgreSQL в качестве БД.
 В проекте реализован REST API по работе с меню ресторана, все CRUD операции.
 
-- Реализован вывод количества подменю и блюд для меню через один ORM запрос (menu_app/repositories/menu_repository/dish_count, submenu_count;
-menu_app/repositories/submenu_repository/dish_for_submenu_count)
-
-- Реализован тестовый сценарий «Проверка кол-ва блюд и подменю в меню» из Postman с помощью pytest (menu_app/tests/test_counts)
-
-- Добавлен эндпоинт для просмотра всей структуры меню вместе с подменю и блюдами:
+- Реализован вывод количества подменю и блюд для меню через один ORM запрос
+```
+menu_app/repositories/menu_repository/submenu_count
+menu_app/repositories/menu_repository/dish_count
+menu_app/repositories/submenu_repository/dish_for_submenu_count
+```
+- Реализован тестовый сценарий «Проверка кол-ва блюд и подменю в меню» из Postman с помощью pytest
+```
+menu_app/tests/test_counts
+```
+- Добавлен эндпоинт для просмотра всей структуры меню вместе с подменю и блюдами
+```
 /api/v1/viewall
-
-
+```
 # Install
 
 - Клонируем репозиторий
