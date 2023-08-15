@@ -9,6 +9,16 @@ from sqlalchemy.pool import NullPool
 from menu_app import models
 from menu_app.database import get_db, get_url
 from menu_app.main import app
+from menu_app.tests.data import (
+    dish_1_test,
+    dish_2_test,
+    dish_updated_test,
+    menu_test,
+    menu_updated_test,
+    submenu_test,
+    submenu_updated_test,
+    viewall_test,
+)
 
 DATABASE_URL_TEST = get_url()
 
@@ -47,106 +57,45 @@ async def ac() -> AsyncClient:
     async with AsyncClient(app=app, base_url='http://test') as ac:
         yield ac
 
-menu = {
-    'title': 'My menu 1',
-    'description': 'My menu description 1'
-}
-
-menu_updated = {
-    'title': 'My updated menu 1',
-    'description': 'My updated menu description 1'
-}
-
-submenu = {
-    'title': 'My submenu 1',
-    'description': 'My submenu description 1'
-}
-
-submenu_updated = {
-    'title': 'My updated submenu 1',
-    'description': 'My updated submenu description 1'
-}
-
-dish_1 = {
-    'title': 'My dish 1',
-    'description': 'My dish description 1',
-    'price': '12.50'
-}
-
-dish_updated = {
-    'title': 'My updated dish 1',
-    'description': 'My updated dish description 1',
-    'price': '14.50'
-}
-
-dish_2 = {
-    'title': 'My dish 2',
-    'description': 'My dish description 2',
-    'price': '13.50'
-}
-
-viewall = [
-    {
-        'id': '',
-        'title': 'My menu 1',
-        'description': 'My menu description 1',
-        'submenus': [
-            {
-                'id': '',
-                'title': 'My submenu 1',
-                'description': 'My submenu description 1',
-                'dishes': [
-                    {
-                        'id': '',
-                        'title': 'My dish 1',
-                        'description': 'My dish description 1',
-                        'price': '12.50'
-                    }
-                ]
-            }
-        ]
-    }
-]
-
 
 @pytest.fixture
 async def get_menu():
-    return menu
+    return menu_test
 
 
 @pytest.fixture
 async def get_updated_menu():
-    return menu_updated
+    return menu_updated_test
 
 
 @pytest.fixture
 async def get_submenu():
-    return submenu
+    return submenu_test
 
 
 @pytest.fixture
 async def get_updated_submenu():
-    return submenu_updated
+    return submenu_updated_test
 
 
 @pytest.fixture
 async def get_dish_1():
-    return dish_1
+    return dish_1_test
 
 
 @pytest.fixture
 async def get_dish_2():
-    return dish_2
+    return dish_2_test
 
 
 @pytest.fixture
 async def get_updated_dish():
-    return dish_updated
+    return dish_updated_test
 
 
 @pytest.fixture
 async def get_viewall():
-    return viewall
+    return viewall_test
 
 
 @pytest.fixture
