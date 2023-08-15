@@ -7,12 +7,13 @@ services:
     env_file: .env
     ports:
       - "8000:8000"
-    command: bash -c "alembic upgrade head && uvicorn menu_app.main:app --host 0.0.0.0 --port 8000 --reload"
+    command: bash -c "alembic upgrade head && uvicorn menu_app.main:app --host 0.0.0.0 --reload"
     depends_on:
       db:
         condition: service_healthy
       cache:
         condition: service_healthy
+
     networks:
       - menu_network
 
@@ -48,6 +49,7 @@ services:
     container_name: rabbit
     env_file: .env
     ports:
+      - "15672:15672"
       - "5672:5672"
     networks:
       - menu_network
@@ -58,12 +60,12 @@ services:
     env_file: .env
     command: bash -c "celery -A menu_app.tasks.tasks:celery worker -B --loglevel=INFO"
     volumes:
-      - /code
+      - /code/admin
+    depends_on:
+      db:
+        condition: service_healthy
     networks:
       - menu_network
-    depends_on:
-      - app
-      - rabbit
 
 networks:
   menu_network:
