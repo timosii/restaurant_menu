@@ -24,6 +24,7 @@
 `menu_app/repositories/menu_repository/dish_count`  
 `menu_app/repositories/submenu_repository/dish_for_submenu_count`  
 - В режиме администратора выполняется **фоновая задача** - каждые 15 секунд данные в базе данных обновляются из файла "Menu.xlsx"  
+- Документация доступна по адресу `/docs`
 
 
 # Install
@@ -63,3 +64,7 @@ make stop
 ```
 make delete-images
 ```
+# Backlog
+- [ ] Реализовать в тестах аналог Django reverse() для FastAPI
+- [ ] Обновление меню из google sheets раз в 15 сек.
+- [ ] Блюда по акции. Размер скидки (%) указывается в столбце G файла Menu.xlsx
