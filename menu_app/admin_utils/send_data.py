@@ -2,7 +2,7 @@ from uuid import UUID
 
 import httpx
 
-BASE_URL = 'http://0.0.0.0:8000'
+BASE_URL = 'http://app:8000'
 
 
 async def send_menu_data(menu_data):

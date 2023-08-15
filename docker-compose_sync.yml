@@ -13,7 +13,6 @@ services:
         condition: service_healthy
       cache:
         condition: service_healthy
-
     networks:
       - menu_network
 
@@ -49,7 +48,6 @@ services:
     container_name: rabbit
     env_file: .env
     ports:
-      - "15672:15672"
       - "5672:5672"
     networks:
       - menu_network
@@ -62,8 +60,10 @@ services:
     volumes:
       - /code/admin
     depends_on:
-      db:
-        condition: service_healthy
+      - rabbit
+      - app
+      - cache
+      - db
     networks:
       - menu_network
 
