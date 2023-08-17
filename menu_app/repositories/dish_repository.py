@@ -24,7 +24,7 @@ class DishRepository:
         current_dishes = result.scalars().all()
 
         for dish in current_dishes:
-            dish.price = str(dish.price)
+            dish.price = f'{dish.price:.2f}'
 
         return current_dishes
 
@@ -41,7 +41,7 @@ class DishRepository:
         self.session.add(db_dish)
         await self.session.commit()
         await self.session.refresh(db_dish)
-        db_dish.price = str(db_dish.price)
+        db_dish.price = f'{db_dish.price:.2f}'
         return db_dish
 
     async def get_dish(self, dish_id: UUID) -> DishOut:
@@ -52,7 +52,7 @@ class DishRepository:
         if current_dish is None:
             not_found(SAMPLE)
 
-        current_dish.price = str(current_dish.price)
+        current_dish.price = f'{current_dish.price:.2f}'
         return current_dish
 
     async def check_dish_by_title(self, dish_title: str) -> None:

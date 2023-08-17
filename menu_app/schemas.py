@@ -16,7 +16,7 @@ class SubmenuIn(BaseItemIn):
 
 
 class DishIn(BaseItemIn):
-    price: str
+    price: str | float
 
 
 class BaseItemOut(BaseModel):

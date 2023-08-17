@@ -53,5 +53,5 @@ class SubmenuService:
             subject=result, menu_id=menu_id, submenu_id=result.id)
         return result
 
-    async def delete(self, menu_id: UUID, submenu_id: UUID) -> JSONResponse:
+    async def delete(self, submenu_id: UUID) -> JSONResponse:
         return await self.database_repository.delete_submenu(submenu_id=submenu_id)

@@ -92,4 +92,4 @@ async def deleting_submenu(background_tasks: BackgroundTasks,
     '''
     background_tasks.add_task(submenu.cache.delete_invalidation,
                               menu_id=menu_id, submenu_id=submenu_id)
-    return await submenu.delete(menu_id=menu_id, submenu_id=submenu_id)
+    return await submenu.delete(submenu_id=submenu_id)

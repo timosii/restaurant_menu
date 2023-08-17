@@ -101,5 +101,4 @@ async def deleting_dish(background_tasks: BackgroundTasks,
     '''
     background_tasks.add_task(dish.cache.delete_invalidation,
                               menu_id=menu_id, submenu_id=submenu_id, dish_id=dish_id)
-    return await dish.delete(menu_id=menu_id,
-                             submenu_id=submenu_id, dish_id=dish_id)
+    return await dish.delete(dish_id=dish_id)

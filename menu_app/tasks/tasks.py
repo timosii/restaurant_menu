@@ -1,6 +1,6 @@
 import asyncio
 
-from menu_app.admin_utils.parser import form_chunks
+from menu_app.admin_utils.parser import form_data
 from menu_app.admin_utils.send_data import (
     send_dish_data,
     send_menu_data,
@@ -10,7 +10,7 @@ from menu_app.tasks.config_celery import celery, delay
 
 
 async def start_sync():
-    DATA = form_chunks()
+    DATA = form_data()
     for menu in DATA['menus']:
         await send_menu_data(menu)
 

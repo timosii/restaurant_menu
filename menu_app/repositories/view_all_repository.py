@@ -24,6 +24,6 @@ class ViewAllRepository:
                 for submenu in menu.submenus:
                     if submenu.dishes:
                         for dish in submenu.dishes:
-                            dish.price = str(dish.price)
+                            dish.price = f'{dish.price:.2f}'
 
         return menu_list
