@@ -9,10 +9,10 @@ from menu_app.admin_utils.send_data import (
 from menu_app.tasks.config_celery import celery, delay
 
 
-async def start_sync():
+async def start_sync() -> None:
     DATA = form_data()
     for menu in DATA['menus']:
-        await send_menu_data(menu)
+        await send_menu_data(menu_data=menu)
 
     for submenu in DATA['submenus']:
         await send_submenu_data(menu_id=submenu['parent_menu_id'], submenu_data=submenu)
@@ -21,11 +21,13 @@ async def start_sync():
         await send_dish_data(menu_id=dish['parent_menu_id'],
                              submenu_id=dish['parent_submenu_id'],
                              dish_data=dish)
+    return
 
 
 @celery.task
-def sync_data():
+def sync_data() -> None:
     asyncio.run(start_sync())
+    return None
 
 
 celery.conf.beat_schedule = {

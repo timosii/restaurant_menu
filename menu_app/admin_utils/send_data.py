@@ -5,7 +5,7 @@ import httpx
 BASE_URL = 'http://app:8000'
 
 
-async def send_menu_data(menu_data):
+async def send_menu_data(menu_data: dict) -> str | Exception:
     url = f'{BASE_URL}/api/v1/menus/'
 
     async with httpx.AsyncClient() as client:
@@ -18,12 +18,13 @@ async def send_menu_data(menu_data):
         url = f'{BASE_URL}/api/v1/menus/{menu_id}'
         async with httpx.AsyncClient() as client:
             response = await client.patch(url, json=menu_data)
+            return response.text
 
     else:
         raise Exception(f'Error creating menu: {response.text}')
 
 
-async def send_submenu_data(menu_id: UUID, submenu_data):
+async def send_submenu_data(menu_id: UUID, submenu_data: dict) -> str | Exception:
     url = f'{BASE_URL}/api/v1/menus/{menu_id}/submenus/'
 
     async with httpx.AsyncClient() as client:
@@ -36,11 +37,12 @@ async def send_submenu_data(menu_id: UUID, submenu_data):
         url = f'{BASE_URL}/api/v1/menus/{menu_id}/submenus/{submenu_id}'
         async with httpx.AsyncClient() as client:
             response = await client.patch(url, json=submenu_data)
+            return response.text
     else:
         raise Exception(f'Error creating submenu: {response.text}')
 
 
-async def send_dish_data(menu_id: UUID, submenu_id: UUID, dish_data):
+async def send_dish_data(menu_id: UUID, submenu_id: UUID, dish_data: dict) -> str | Exception:
     url = f'{BASE_URL}/api/v1/menus/{menu_id}/submenus/{submenu_id}/dishes/'
 
     async with httpx.AsyncClient() as client:
@@ -53,5 +55,6 @@ async def send_dish_data(menu_id: UUID, submenu_id: UUID, dish_data):
         url = f'{BASE_URL}/api/v1/menus/{menu_id}/submenus/{submenu_id}/dishes/{dish_id}'
         async with httpx.AsyncClient() as client:
             response = await client.patch(url, json=dish_data)
+            return response.text
     else:
         raise Exception(f'Error creating dish: {response.text}')

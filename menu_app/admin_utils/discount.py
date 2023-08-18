@@ -4,7 +4,7 @@ from menu_app.admin_utils.parser import form_data
 
 
 class Discount():
-    def __init__(self):
+    def __init__(self) -> None:
         self.data = form_data()
 
     def calculate(self, dish_id: UUID) -> str | None:

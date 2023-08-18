@@ -10,7 +10,7 @@ async def test_reading_menus(ac: AsyncClient):
     assert response.json() == []
 
 
-async def test_create_menu(ac: AsyncClient, get_menu):
+async def test_create_menu(ac: AsyncClient, get_menu: dict) -> None:
     response = await ac.post(f'{prefix}/', json=get_menu)
     assert response.status_code == 201
     result = response.json()
@@ -23,7 +23,7 @@ async def test_create_menu(ac: AsyncClient, get_menu):
     assert isinstance(result['dishes_count'], int)
 
 
-async def test_reading_menu(ac: AsyncClient, get_menu):
+async def test_reading_menu(ac: AsyncClient, get_menu: dict) -> None:
     response = await ac.get(f'{prefix}/{test_menu_id}')
     assert response.status_code == 200
     result = response.json()
@@ -34,7 +34,7 @@ async def test_reading_menu(ac: AsyncClient, get_menu):
     assert isinstance(result['dishes_count'], int)
 
 
-async def test_updating_menu(ac: AsyncClient, get_updated_menu):
+async def test_updating_menu(ac: AsyncClient, get_updated_menu: dict) -> None:
     response = await ac.patch(f'{prefix}/{test_menu_id}', json=get_updated_menu)
     assert response.status_code == 200
     result = response.json()
@@ -45,7 +45,7 @@ async def test_updating_menu(ac: AsyncClient, get_updated_menu):
     assert isinstance(result['dishes_count'], int)
 
 
-async def test_deleting_menu(ac: AsyncClient):
+async def test_deleting_menu(ac: AsyncClient) -> None:
     response = await ac.delete(f'{prefix}/{test_menu_id}')
     assert response.status_code == 200
     result = response.json()
@@ -53,7 +53,7 @@ async def test_deleting_menu(ac: AsyncClient):
     assert result['message'] == 'The menu has been deleted'
 
 
-async def test_reading_missing_menu(ac: AsyncClient):
+async def test_reading_missing_menu(ac: AsyncClient) -> None:
     response = await ac.get(f'{prefix}/{test_menu_id}')
     assert response.status_code == 404
     result = response.json()

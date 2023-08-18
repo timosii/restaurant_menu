@@ -28,30 +28,30 @@ class CacheInvalidation(CacheUtils):
 
 
 class CacheMenuInvalidation(CacheInvalidation):
-    async def create_invalidation(self):
+    async def create_invalidation(self) -> None:
         await self.del_list(prefix='Menus')
         await self.del_list(prefix='ViewAll')
 
-    async def update_invalidation(self):
+    async def update_invalidation(self) -> None:
         await self.del_list(prefix='Menus')
         await self.del_list(prefix='ViewAll')
 
-    async def delete_invalidation(self, menu_id: UUID):
+    async def delete_invalidation(self, menu_id: UUID) -> None:
         await self.del_all_lists(menu_id=menu_id)
         await self.delete(menu_id=menu_id)
         await self.del_child(parent_id=menu_id)
 
 
 class CacheSubmenuInvalidation(CacheInvalidation):
-    async def create_invalidation(self, menu_id: UUID):
+    async def create_invalidation(self, menu_id: UUID) -> None:
         await self.del_all_lists(menu_id=menu_id)
         await self.delete(menu_id=menu_id)
 
-    async def update_invalidation(self, menu_id: UUID):
+    async def update_invalidation(self, menu_id: UUID) -> None:
         await self.del_list(prefix=f'Submenus:{menu_id}')
         await self.del_list(prefix='ViewAll')
 
-    async def delete_invalidation(self, menu_id: UUID, submenu_id: UUID):
+    async def delete_invalidation(self, menu_id: UUID, submenu_id: UUID) -> None:
         await self.del_all_lists(menu_id=menu_id, submenu_id=submenu_id)
         await self.delete(menu_id=menu_id)
         await self.delete(menu_id=menu_id, submenu_id=submenu_id)
@@ -59,16 +59,16 @@ class CacheSubmenuInvalidation(CacheInvalidation):
 
 
 class CacheDishInvalidation(CacheInvalidation):
-    async def create_invalidation(self, menu_id: UUID, submenu_id: UUID):
+    async def create_invalidation(self, menu_id: UUID, submenu_id: UUID) -> None:
         await self.del_all_lists(menu_id=menu_id, submenu_id=submenu_id)
         await self.delete(menu_id=menu_id)
         await self.delete(menu_id=menu_id, submenu_id=submenu_id)
 
-    async def update_invalidation(self, menu_id: UUID, submenu_id: UUID):
+    async def update_invalidation(self, menu_id: UUID, submenu_id: UUID) -> None:
         await self.del_list(prefix=f'Dishes:{submenu_id}:{menu_id}')
         await self.del_list(prefix='ViewAll')
 
-    async def delete_invalidation(self, menu_id: UUID, submenu_id: UUID, dish_id: UUID):
+    async def delete_invalidation(self, menu_id: UUID, submenu_id: UUID, dish_id: UUID) -> None:
         await self.del_all_lists(menu_id=menu_id, submenu_id=submenu_id)
         await self.delete(menu_id=menu_id)
         await self.delete(menu_id=menu_id, submenu_id=submenu_id)

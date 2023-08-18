@@ -4,7 +4,7 @@ from sqlalchemy.orm import declarative_base, sessionmaker
 from menu_app.config import settings
 
 
-def get_url():
+def get_url() -> str:
     user = settings.POSTGRES_USER
     password = settings.POSTGRES_PASSWORD
     hostname = settings.POSTGRES_HOST

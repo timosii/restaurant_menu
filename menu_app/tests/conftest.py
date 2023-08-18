@@ -1,4 +1,5 @@
 import asyncio
+from uuid import UUID
 
 import pytest
 from httpx import AsyncClient
@@ -59,85 +60,85 @@ async def ac() -> AsyncClient:
 
 
 @pytest.fixture
-async def get_menu():
+async def get_menu() -> dict:
     return menu_test
 
 
 @pytest.fixture
-async def get_updated_menu():
+async def get_updated_menu() -> dict:
     return menu_updated_test
 
 
 @pytest.fixture
-async def get_submenu():
+async def get_submenu() -> dict:
     return submenu_test
 
 
 @pytest.fixture
-async def get_updated_submenu():
+async def get_updated_submenu() -> dict:
     return submenu_updated_test
 
 
 @pytest.fixture
-async def get_dish_1():
+async def get_dish_1() -> dict:
     return dish_1_test
 
 
 @pytest.fixture
-async def get_dish_2():
+async def get_dish_2() -> dict:
     return dish_2_test
 
 
 @pytest.fixture
-async def get_updated_dish():
+async def get_updated_dish() -> dict:
     return dish_updated_test
 
 
 @pytest.fixture
-async def get_viewall():
+async def get_viewall() -> list[dict]:
     return viewall_test
 
 
 @pytest.fixture
-async def get_menuid_for_submenu_test(ac: AsyncClient, get_submenu):
+async def get_menuid_for_submenu_test(ac: AsyncClient, get_submenu: dict) -> UUID:
     response = await ac.post('/api/v1/menus/',
                              json=get_submenu)
     result = response.json()
-    test_menu_id = result['id']
+    test_menu_id: UUID = result['id']
     return test_menu_id
 
 
 @pytest.fixture
-async def get_menuid(ac: AsyncClient, get_menu):
+async def get_menuid(ac: AsyncClient, get_menu: dict) -> UUID:
     response = await ac.post('/api/v1/menus/',
                              json=get_menu)
     result = response.json()
-    test_menu_id = result['id']
+    test_menu_id: UUID = result['id']
     return test_menu_id
 
 
 @pytest.fixture
-async def get_submenuid(ac: AsyncClient, get_menuid, get_submenu):
+async def get_submenuid(ac: AsyncClient, get_menuid: UUID, get_submenu: dict) -> tuple[UUID, UUID]:
     test_menu_id = get_menuid
     response = await ac.post(f'/api/v1/menus/{test_menu_id}/submenus/',
                              json=get_submenu)
     result = response.json()
-    test_submenu_id = result['id']
+    test_submenu_id: UUID = result['id']
     return test_menu_id, test_submenu_id
 
 
 @pytest.fixture
-async def get_data_for_viewall_test(ac: AsyncClient, get_submenuid, get_dish_1):
+async def get_data_for_viewall_test(ac: AsyncClient, get_submenuid: tuple[UUID, UUID], get_dish_1: dict) -> tuple[UUID, UUID, UUID]:
     test_menu_id, test_submenu_id = get_submenuid
     response = await ac.post(f'/api/v1/menus/{test_menu_id}/submenus/{test_submenu_id}/dishes/',
                              json=get_dish_1)
     result = response.json()
-    test_dish_id = result['id']
+    test_dish_id: UUID = result['id']
     return test_menu_id, test_submenu_id, test_dish_id
 
 
 @pytest.fixture
-async def get_expected_viewall(get_data_for_viewall_test, get_viewall):
+async def get_expected_viewall(get_data_for_viewall_test: tuple[UUID, UUID, UUID], get_viewall: list[dict]) -> list[dict]:
     test_menu_id, test_submenu_id, test_dish_id = get_data_for_viewall_test
     expected_result = get_viewall
     for menu in expected_result:

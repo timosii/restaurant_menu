@@ -1,6 +1,6 @@
 import json
 
-import aioredis
+from aioredis import ConnectionPool, from_url
 from fastapi.encoders import jsonable_encoder
 
 from menu_app.config import settings
@@ -9,13 +9,13 @@ from menu_app.schemas import DishOut, MenuAllOut, MenuOut, SubmenuOut
 host = settings.REDIS_HOST
 port = settings.REDIS_PORT
 db = settings.REDIS_DB
-redis_url = f'redis://{host}:{port}'
 EXPIRE = settings.CACHE_EXPIRE
+redis_url = f'redis://{host}:{port}'
 
 
 class CacheUtils:
-    async def get_redis_conn(self):
-        return await aioredis.from_url(redis_url, db=db)
+    async def get_redis_conn(self) -> ConnectionPool:
+        return await from_url(redis_url, db=db)
 
     async def key_generation(self, **kwargs) -> str:
         menu_id = kwargs.get('menu_id', None)
@@ -51,7 +51,7 @@ class CacheBase(CacheUtils):
             await conn.set(form_key, json.dumps(cache_data))
             await conn.expire(form_key, EXPIRE)
 
-    async def load(self, subject, **kwargs) -> MenuOut | SubmenuOut | DishOut | None:
+    async def load(self, subject: type[MenuOut] | type[SubmenuOut] | type[DishOut], **kwargs) -> MenuOut | SubmenuOut | DishOut | None:
         form_key = await self.key_generation(**kwargs)
         async with await self.get_redis_conn() as conn:
             cached_data = await conn.get(form_key)

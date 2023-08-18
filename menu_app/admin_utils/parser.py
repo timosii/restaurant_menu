@@ -1,7 +1,7 @@
 import openpyxl
 
 
-def form_data():
+def form_data() -> dict:
     book = openpyxl.open('admin/Menu.xlsx', read_only=True, data_only=True)
     sheet = book.active
     rows = []
